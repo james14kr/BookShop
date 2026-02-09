@@ -1,0 +1,47 @@
+/* 모든 버튼에 적용될 디자인 */
+.button{
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+}
+
+/*--------- 버튼 색상별 디자인 ---------*/
+/* 대표 색상 */
+.purple{
+  background-color: #6732de;
+  color: white;
+}
+
+.purple:hover{
+  background-color: #5633ba;
+}
+
+.green{
+  background-color: #57b63f;
+  color: white;
+}
+
+.green:hover{
+  background-color: #4fa73a;
+}
+
+.gray{
+  background-color: #e7e7e7;
+  color: #5f5f5f;
+}
+
+.gray:hover{
+  background-color: #d4d4d4;
+}
+
+/*--------- 버튼 크기별 디자인 ---------*/
+.small{
+  padding: 0.38rem 1rem;
+}
+
+.medium{
+  padding: 0.6rem 1.8rem;
+}

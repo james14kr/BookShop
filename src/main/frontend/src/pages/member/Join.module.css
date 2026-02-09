@@ -1,0 +1,53 @@
+.container{
+  width: 300px;
+  margin: 30px auto;
+  /* border: 1px solid black; */
+}
+
+.container > div{
+  margin-bottom: 0.7rem;
+}
+
+.container > div > p{
+  margin-bottom: 0.3;
+}
+
+.container input{
+  width: 100%;
+}
+
+.id_div{
+  display: flex;
+  gap: 6px;
+}
+
+.id_div > input {
+  width: 70%;
+}
+
+.id_div > button{
+  width: 30%;
+}
+
+.tel_div{
+  display: flex;
+  gap: 6px;
+}
+
+.address_div{
+  display: flex;
+  gap: 6px;
+  margin-bottom: 0.2rem;
+}
+
+.address_div > input{
+  width: 70%;
+}
+
+.address_div > button{
+  width: 30%;
+}
+
+.btn_div > button{
+  width: 100%;
+}

@@ -1,0 +1,17 @@
+.container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+    background-color: rgba(211, 211, 211, 0.09);
+}
+
+.logo{
+  width: 300px;
+  height: 70px;
+  object-fit: cover;
+}
+
+.container > ul{
+  display: flex;
+  gap: 10px;
+}
