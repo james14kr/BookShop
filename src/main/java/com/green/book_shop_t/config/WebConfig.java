@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
 
             // 허용할 출처(origin) 설정
             .allowedOrigins(
-                    "http://localhost:5173"      // Vite React 개발 서버
+                    "http://localhost:5174"      // Vite React 개발 서버
             )
 
             // 허용할 HTTP 메서드 설정

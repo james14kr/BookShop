@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -29,6 +26,17 @@ public class MemberController {
     }
   }
 
+  //사용 가능한 이메일인지 체크하는 api
+  @GetMapping("/checkEmail/{memEmail}")
+  public ResponseEntity<?> checkEmail(@PathVariable("memEmail") String memEmail){
+    try {
+      boolean result = memberService.checkEmail(memEmail);
+      return ResponseEntity.status(HttpStatus.OK).body(result);
+    } catch (Exception e) {
+      log.error("이메일 중복 체크 중 에러", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
 
 }
 

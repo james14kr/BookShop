@@ -45,3 +45,8 @@
 .medium{
   padding: 0.6rem 1.8rem;
 }
+
+.disabled{
+  opacity: 0.6;
+  cursor: not-allowed;
+}

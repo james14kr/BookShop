@@ -8,4 +8,6 @@ public interface MemberMapper {
 
   void insertInfo(MemberDTO memberDTO);
 
+  String checkEmail(String memEmail);
+
 }

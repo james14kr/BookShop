@@ -15,3 +15,17 @@ export const insertInfo = async (info) => {
     console.log("회원가입 axios 에러" , e /*모든 오류의 정보*/)
   }
 }
+
+/*
+* 입력한 이메일이 중복인 확인하는 api
+* @param{string} memEmail 
+* @returns
+*/
+export const checkEmail = async(memEmail) => {
+  try{
+    const response = await axios.get(`http://localhost:8080/members/checkEmail/${memEmail}`)
+    return response;
+  }catch(e){
+    console.log("이메일 중복 에러",e)
+  }
+}

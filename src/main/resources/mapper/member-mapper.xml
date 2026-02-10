@@ -33,36 +33,12 @@
             ,#{addrDetail}
         )
     </insert>
+
+    <!--이메일 중복 체크 쿼리-->
+    <select id="checkEmail" resultType="string">
+        SELECT MEM_EMAIL
+        FROM SHOP_MEMBER
+        WHERE MEM_EMAIL = #{memEmail}
+    </select>
 	
 </mapper>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

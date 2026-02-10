@@ -14,6 +14,12 @@ public class MemberService {
     memberMapper.insertInfo(memberDTO);
   }
 
+  //사용 가능 이메일 확인 기능
+  public boolean checkEmail(String memEmail){
+    String email = memberMapper.checkEmail(memEmail);
+    return email == null;
+  }
+
 }
 
 
