@@ -21,7 +21,10 @@ CREATE TABLE SHOP_MEMBER (
 	, JOIN_DATE DATETIME DEFAULT SYSDATE()
 );
 
-SELECT * FROM shop_member;
+select * FROM shop_member;
+
+DELETE FROM SHOP_MEMBER;
+
 
 
 

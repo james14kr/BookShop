@@ -20,6 +20,8 @@ public class MemberService {
     return email == null;
   }
 
+
+
 }
 
 

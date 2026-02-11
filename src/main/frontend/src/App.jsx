@@ -5,6 +5,7 @@ import Join from './pages/member/Join'
 import './reset.css'
 import BookList from './pages/book/BookList'
 import Login from './pages/member/Login'
+import BookForm from './pages/book/BookForm'
 
 function App() {
 
@@ -32,11 +33,13 @@ function App() {
 
         {/* 매니저 권한의 회원이 접근하는 페이지들 */}
         <Route path='/manage' element = {<ManagerLayout/>}>
-          <Route path='join' element = {<Join/>}/>
+          <Route path='book-form' element = {<BookForm/>}/>
+
+
         </Route>
       </Routes>
     </>
   )
-}
+} 
 
 export default App

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<!-- namespace에는 xml파일과 연결할 Mapper interface 파일명을 패키지를 포함하여 적어주세요 -->
+<mapper namespace="com.green.book_shop_t.book_cate.mapper.CateMapper">
+    <resultMap id="category" type="com.green.book_shop_t.book_cate.dto.CateDTO">
+        <id     column="CATE_NUM"      property="cateNum" />
+        <result column="CATE_NAME"         property="cateName" />
+    </resultMap>
+
+    <!--카테고리 목록 조회 쿼리-->
+    <select id="selectCateList" resultMap="category">
+        SELECT CATE_NUM
+            ,CATE_NAME
+        FROM BOOK_CATEGORY
+        ORDER BY CATE_NUM
+    </select>
+
+	
+</mapper>
