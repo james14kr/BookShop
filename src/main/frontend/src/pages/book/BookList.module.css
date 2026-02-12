@@ -1,0 +1,11 @@
+.container{
+  text-align: center;
+}
+
+.container > div{
+  margin-bottom: 10px;
+}
+
+.container > div:nth-child(2) > span{
+  color: blue;
+}

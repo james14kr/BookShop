@@ -41,5 +41,14 @@
         WHERE MEM_EMAIL = #{memEmail}
     </select>
 
+    <!--로그인 쿼리-->
+    <select id="login" resultMap="member">
+        SELECT MEM_EMAIL
+            ,MEM_NAME
+            ,MEM_ROLE
+        FROM SHOP_MEMBER
+        WHERE MEM_EMAIL = #{memEmail} AND MEM_PW = #{memPw}
+    </select>
+
 	
 </mapper>

@@ -38,6 +38,18 @@ public class MemberController {
     }
   }
 
+  //로그인 api
+  @GetMapping("/login")
+  public ResponseEntity<?> checkLogin(MemberDTO memberDTO){
+    try {
+      MemberDTO result = memberService.login(memberDTO);
+      return ResponseEntity.status(HttpStatus.OK).body(result);
+    } catch (Exception e) {
+      log.error("로그인 기능 에러", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
 }
 
 

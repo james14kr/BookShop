@@ -8,6 +8,10 @@ public interface MemberMapper {
 
   void insertInfo(MemberDTO memberDTO);
 
+  //아이디 중복 체크 실행 메서드
   String checkEmail(String memEmail);
+
+  //로그인 쿼리 실행 메서드
+  MemberDTO login (MemberDTO memberDTO);
 
 }
