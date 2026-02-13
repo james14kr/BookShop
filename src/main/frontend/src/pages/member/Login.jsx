@@ -5,7 +5,7 @@ import styles from './Login.module.css'
 import { login } from '../../api/loginApi'
 import { useNavigate } from 'react-router-dom'
 
-const Login = () => {
+const Login = ({setLoginInfo}) => {
 
   const nav = useNavigate();
 
@@ -41,8 +41,15 @@ const Login = () => {
       //JSON.parse(json); -> json 데이터를 객체로 변경
       sessionStorage.setItem('loginInfo', JSON.stringify(loginInfo));
 
-      //도서 목록 페이지로 이동
-      nav('/');
+      setLoginInfo(loginInfo);
+
+      if(loginInfo.memRole === 'MANAGER'){
+        nav('/manage/book-form')
+      }else{
+        nav('/');
+      }
+
+    
 
     }else{
       alert('아이디 및 비밀번호를 확인하세요')
@@ -61,7 +68,11 @@ const Login = () => {
     <div className={styles.container}>
       <div className={styles.loginForm}>
         <div>
-          <Input placeholder='Input Your Id' name='memEmail' value={loginData.memEmail} onChange={handleLoginData}/>
+          <Input 
+            placeholder='Input Your Id' 
+            name='memEmail' 
+            value={loginData.memEmail}
+            onChange={handleLoginData}/>
         </div>
         <div>
           <Input 

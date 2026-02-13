@@ -33,5 +33,22 @@
         )
     </insert>
 
+    <!--도서 목록 조회 쿼리-->
+    <select id="selectBook" resultMap="book">
+        SELECT BOOK_NUM
+            ,BOOK_TITLE
+            ,BOOK_PRICE
+        FROM SHOP_BOOK
+    </select>
+
+    <!--도서 상세 정보 조회 쿼리-->
+    <select id="selectBookDetail" resultMap="book">
+        SELECT BOOK_NUM
+            ,BOOK_TITLE
+            ,AUTHOR
+            ,BOOK_PRICE
+        FROM SHOP_BOOK
+        WHERE BOOK_NUM = #{bookNum}
+    </select>
 	
 </mapper>

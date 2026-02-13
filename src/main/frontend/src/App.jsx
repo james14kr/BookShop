@@ -7,8 +7,12 @@ import BookList from './pages/book/BookList'
 import Login from './pages/member/Login'
 import BookForm from './pages/book/BookForm'
 import WebStorage from './WebStorage'
+import { useState } from 'react'
+import BookDetail from './pages/book/BookDetail'
 
 function App() {
+
+  const [loginInfo, setLoginInfo] = useState({});
 
   return (
     <>
@@ -19,7 +23,7 @@ function App() {
         {/* 바깥 컴포넌트에 <Outlet/> 컴포넌트를 사용하여 함께 열리는 컴포넌트의 위치를 지정한다. */}
 
         {/* 일반 회원이 접근하는 페이지들 */}
-        <Route path='/' element = {<BasicLayout/>}>
+        <Route path='/' element = {<BasicLayout setLoginInfo ={setLoginInfo}/>}>
 
           {/* WebStorage 학습용 컴포넌트 */}
           <Route path='storage' element = {<WebStorage/>}/>
@@ -31,12 +35,16 @@ function App() {
           <Route path='join' element = {<Join/>}/>
 
           {/* 로그인페이지, URL : localhost:5173/login */}
-          <Route path='login' element = {<Login/>}/>
+          <Route path='login' element = {<Login setLoginInfo={setLoginInfo}/>}/>
+
+          {/* 도서 상세정보 페이지  URL : localhost:5173/*/}
+          <Route path="books/:bookNum" element={<BookDetail />} />
+
 
         </Route>
 
         {/* 매니저 권한의 회원이 접근하는 페이지들 */}
-        <Route path='/manage' element = {<ManagerLayout/>}>
+        <Route path='/manage' element = {<ManagerLayout setLoginInfo = {setLoginInfo}/>}>
 
           {/* 상품 등록 페이지, URL : localhost:5173/manage/book-form */}
           <Route path='book-form' element = {<BookForm/>}/>

@@ -67,7 +67,7 @@ const BookForm = () => {
       isvalid = false;
     }
     // 2) 제목이 최대글자 수를 넘겼을 때
-    if(bookData.bookTitle.length > 10){
+    if(bookData.bookTitle.length > 20){
       newErrors.bookTitle = '10글자를 초과할 수 없습니다.'
       isvalid = false;
     }

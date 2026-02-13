@@ -1,0 +1,17 @@
+<<2026-02-12 학습 내용>>
+1. spring 작성
+	1). 로그인 쿼리 작성
+		member-mapper.xml에 SELECT 로그인 쿼리 작성
+	2). 로그인 쿼리 실행 메서드 작성
+		MemberMapper.java에 로그인 쿼리 실행 메서드 작성
+	3). 로그인 여부 확인 기능 메서드 작성
+		MemberService.java에 로그인 여부 확인 기능 메서드 작성
+	4). 로그인 api 작성
+		MemberController.java에 로그인 api 작성
+
+2. react 작성
+	1). Login.jsx에 로그인 폼 작성
+	2). 입력할 정보를 저장할 state 변수 작성
+	3). 입력할 때마다 실행하는 함수 작성
+	4). 로그인 버튼 클릭 시 실행하는 함수 작성
+		- api 패키지 안에 loginApi 작성

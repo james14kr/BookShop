@@ -1,32 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { login } from '../../api/loginApi'
-import styles from './BookList.Module.css'
 import Button from '../../components/common/Button'
 import { useNavigate } from 'react-router-dom'
+import { selectBook } from '../../api/bookApi'
+import EachBook from '../../components/book/EachBook'
+import styles from './BookList.module.css'
 
 const BookList = () => {
 
-  const loginInfo = sessionStorage.getItem('loginInfo')
-  const name = JSON.parse(loginInfo)
+  const [booklist, setBooklist] = useState([]);
 
-  const nav = useNavigate();
-
-  const logOut = () => {
-    alert('로그아웃 하시겠습니까?')
-    nav('/login');
+  const getBook = async () => {
+    const response = await selectBook();
+    if(response){
+      setBooklist(response.data);
+    }
   }
 
+  useEffect(() => {
+    getBook()
+  }, [])
+
   return (
-    <div className={styles.container}>
-      <div>도서 목록 페이지입니다.</div>
-      <div>
-        <span>{name.memName}</span>님 반갑습니다.
-      </div>
-      <div>
-        <Button title='로그아웃' onClick={logOut}/>
-      </div>
+    <div className={styles.productList}>
+      {booklist.map(book => (
+        <EachBook key={book.bookNum} book={book} />
+      ))}
     </div>
-   
   )
 }
 
