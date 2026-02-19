@@ -35,6 +35,10 @@ const BookForm = () => {
     cateNum : '0'
   });
 
+  //선택한 이미지 파일을 저장할 state 변수
+  const [mainImg, setMainImg] = useState(null);
+  const [subImgs, setSubImgs] = useState(null);
+
   //유효성 검사 결과 에러 메세지를 저장하는 state변수
   const [errors, setErrors] = useState({
     bookTitle : '',
@@ -147,7 +151,25 @@ const BookForm = () => {
       return; //더이상 실행 안함
     }
 
-    const response =  await insertBook(bookData);
+    //입력한 도서 정보 및 첨부파일 정보를 모두 저장할 수 있는 FormData 객체 생성 및 데이터 적재
+    const regForm = new FormData(); //모든 정보를 담을 통
+    regForm.append('bookTitle', bookData.bookTitle);
+    regForm.append('bookPrice', bookData.bookPrice);
+    regForm.append('author', bookData.author);
+    regForm.append('bookIntro', bookData.bookIntro);
+    regForm.append('publishDate', bookData.publishDate);
+    regForm.append('cateNum', bookData.cateNum);
+
+    //파일 정보 저장
+    regForm.append('mainImg', mainImg);
+
+    //상세 파일들 정보 저장
+    //배열 데이터를 전달할 수 없기 때문에, 파일 하나씩 반복해서 적재
+    for(const e of subImgs){
+      regForm.append('subImgs', e);
+    }
+
+    const response =  await insertBook(regForm);
 
     if(response.status == 201){
       alert('등록 성공')
@@ -155,6 +177,8 @@ const BookForm = () => {
       alert('등록 실패')
     }
   }
+
+  console.log('subImgs : ' , subImgs);
 
   return (
 
@@ -230,6 +254,44 @@ const BookForm = () => {
             onChange={e => handleBookData(e)}
           />
           {errors.publishDate && <p className='error'>{errors.publishDate}</p>}
+      </div>
+
+      <div>
+        <input type="file" 
+          //업로드할 파일을 선택할 때 
+          onChange={e => {
+            //선택한 파일의 이름을 consol에 출력하는 코드
+            console.log(e.target.files)
+            console.log(e.target.files[0])
+            //대표 이미지를 mainImg 변수에 저장
+            setMainImg(e.target.files[0])
+          }}
+        />
+      </div>
+      <div>
+        {/* multiful */}
+        <input 
+          type="file"
+          multiple={true}
+          onChange={e => {
+            console.log(e.target.files);
+            //선택한 모든 파일명을 consol에 출력
+            for(let i = 0; i < e.target.files.length; i++){
+              console.log(e.target.files[i].name)
+            }
+
+            //선택한 파일 전체를 저장할 배열 생성
+            const fileArr = [];
+
+            //선택한 파일 수만큼 배열에 파일을 저장
+            for(let i = 0; i < e.target.files.length; i++){
+              fileArr.push(e.target.files[i]); //i라는 키값의 value를 저장
+            }
+
+            setSubImgs(fileArr);
+
+          }}
+        />
       </div>
 
       <div>

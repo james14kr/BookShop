@@ -13,7 +13,7 @@ const ManagerHeader = ({setLoginInfo}) => {
     <div className={styles.container}>
       <img src="/logo.png" className={styles.logo} />
       <ul>
-        <li>{info.memEmail} 매니저님 반갑습니다.</li>
+        <li>{info.memEmail}님 반갑습니다.</li>
           <li style={{cursor : 'pointer'}}
               onClick={e => {
                 sessionStorage.removeItem('loginInfo');
