@@ -11,7 +11,7 @@ export const insertBook = async(bookData) => {
       header : {'Content-Type' : 'multipart/form-data'}
     };
 
-    const response = await axios.post('http://localhost:8080/books', bookData);
+    const response = await axios.post('http://localhost:8080/books', bookData, fileConfig);
     return response;
   }catch(e){
     console.log('도서 등록 axios 에러', e)

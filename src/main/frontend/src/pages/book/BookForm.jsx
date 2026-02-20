@@ -71,7 +71,7 @@ const BookForm = () => {
       isvalid = false;
     }
     // 2) 제목이 최대글자 수를 넘겼을 때
-    if(bookData.bookTitle.length > 20){
+    if(bookData.bookTitle.length > 10){
       newErrors.bookTitle = '10글자를 초과할 수 없습니다.'
       isvalid = false;
     }
@@ -84,7 +84,7 @@ const BookForm = () => {
     }
 
     // 2) 잘못된 데이터 입력했을 때 (문자x, 0이하)
-    if(isNaN(bookData.bookPrice) || Number(bookData.bookPrice) <= 10){
+    if(isNaN(bookData.bookPrice) || Number(bookData.bookPrice) <= 0){
       newErrors.bookPrice = '적합한 데이터가 아닙니다.'
       isvalid = false;
     }
@@ -173,6 +173,17 @@ const BookForm = () => {
 
     if(response.status == 201){
       alert('등록 성공')
+      //input 태그 내용 초기화
+      setBookData(
+        {
+          bookTitle : '',
+          bookPrice : '',
+          author : '',
+          bookIntro : '',
+          publishDate : '',
+          cateNum : '0'
+        }
+      );
     }else{
       alert('등록 실패')
     }
