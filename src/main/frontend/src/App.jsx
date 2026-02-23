@@ -9,6 +9,7 @@ import BookForm from './pages/book/BookForm'
 import WebStorage from './WebStorage'
 import { useState } from 'react'
 import BookDetail from './pages/book/BookDetail'
+import Cart from './pages/cart/Cart'
 
 function App() {
 
@@ -40,6 +41,8 @@ function App() {
           {/* 도서 상세정보 페이지  URL : localhost:5173/*/}
           <Route path="books/:bookNum" element={<BookDetail />} />
 
+          {/* 도서 장바구니 페이지 URL : locahost:5173/cart */}
+          <Route path='cart' element={<Cart/>}/>
 
         </Route>
 

@@ -8,12 +8,12 @@ import styles from './BookList.module.css'
 
 const BookList = () => {
 
-  const [booklist, setBooklist] = useState([]);
+  const [booklist, setBookList] = useState([]);
 
   const getBook = async () => {
     const response = await selectBook();
     if(response){
-      setBooklist(response.data);
+      setBookList(response.data);
     }
   }
 
@@ -21,10 +21,16 @@ const BookList = () => {
     getBook()
   }, [])
 
+  // const getList = async () => {
+  //   const response = await getBookList();
+  //   setBookList(response.data);
+  //   console.log(response.data);
+  // }
+
   return (
     <div className={styles.productList}>
-      {booklist.map(book => (
-        <EachBook key={book.bookNum} book={book} />
+      {booklist.map((book, i)=> (
+        <EachBook key={i} book={book} />
       ))}
     </div>
   )

@@ -32,12 +32,12 @@ public class BookService {
     return bookMapper.selectBook();
   }
 
-  //다음에 저장될 도서번호를 조회하는 기능
+  //도서 상세 정보 조회 기능 메서드
   public BookDTO selectBookDetail(int bookNum){
     return bookMapper.selectBookDetail(bookNum);
   }
 
-  //도서 상세 정보 조회 기능 메서드
+  //다음에 저장될 도서번호를 조회하는 기능
   public int getNextBookNum(){
     return bookMapper.getNextBookNum();
   }

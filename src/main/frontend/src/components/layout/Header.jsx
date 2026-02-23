@@ -37,7 +37,11 @@ const Header = ({setLoginInfo}) => {
               <li>
                 {loginInfo2.memEmail}님 반갑습니다.
               </li>
-              <li>
+              <li style={{cursor : 'pointer'}}
+                onClick={e => {
+                  nav('/cart');
+                }}
+              >
                 장바구니
               </li>
               <li style={{cursor : 'pointer'}}

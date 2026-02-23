@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<!-- namespace에는 xml파일과 연결할 Mapper interface 파일명을 패키지를 포함하여 적어주세요 -->
+<mapper namespace="com.green.book_shop_t.book.mapper.CartMapper">
+    <resultMap id="cart" type="com.green.book_shop_t.book.dto.CartDTO">
+        <id column="CART_NUM" property="cartNum"/>
+        <result column="BOOK_NUM" property="bookNum"/>
+        <result column="BOOK_TITLE" property="bookTitle"/>
+        <result column="BOOK_PRICE" property="bookPrice"/>
+        <result column="CART_CNT" property="cartCnt"/>
+        <result column="MEM_EMAIL" property="memEmail"/>
+        <result column="CART_DATE" property="cartDate"/>
+    </resultMap>
+
+    <insert id="insertCart">
+        INSERT INTO SHOP_CART(
+            BOOK_NUM
+            ,CART_CNT
+            ,MEM_EMAIL
+        )VALUES(
+            #{bookNum}
+            ,#{cartCnt}
+            ,#{memEmail}
+        )
+    </insert>
+
+    <select id="selectCartList" resultMap="cart">
+        SELECT C.CART_NUM
+            ,B.BOOK_NUM
+            ,B.BOOK_TITLE
+            ,B.BOOK_PRICE
+            ,C.CART_CNT
+            ,C.CART_DATE
+        FROM SHOP_CART C INNER JOIN SHOP_BOOK B
+        ON C.BOOK_NUM = B.BOOK_NUM
+        WHERE C.MEM_EMAIL = #{memEmail}
+        ORDER BY C.CART_NUM DESC;
+    </select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -75,7 +75,6 @@ public class BookController {
         e.setBookNum(nextBookNum);
       }
 
-      //쿼리의 빈값을 채울 수 있는 원본파일명, 첨부된파일명, 메인여부, 도서번호
       /*mainImgFile.getOriginalFilename();*/
 
       //SHOP_BOOK, BOOK_IMG 테이블에 데이터 INSERT

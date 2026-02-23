@@ -9,11 +9,10 @@ const EachBook = ({book}) => {
     nav(`/books/${book.bookNum}`)
   }
 
-
   return (
     <div className={styles.productCard} onClick={goDetail}>
       <div className={styles.img_div}>
-        <img src="/가장 빨리 만나는 자바_메인.jpg"/>
+        <img src={`http://localhost:8080/upload/${book.bookImgList[0].uploadFileName}`}/>
         <div className={styles.detail}>상세보기</div>
       </div>
       <div  className={styles.productInfo}>

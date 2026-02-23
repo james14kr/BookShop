@@ -12,50 +12,60 @@
         <result column="BOOK_PRICE"         property="bookPrice" />
         <result column="PUBLISH_DATE"         property="publishDate" />
         <result column="CATE_NUM"         property="cateNum" />
+        <!--<association property=""></association> 1대 1 관계 설정-->
+        <!--<collection property=""></collection> 1 : N 관계 설정-->
+        <collection property="bookImgList" resultMap="com.green.book_shop_t.book.mapper.BookImgMapper.bookImg"/>
     </resultMap>
 
     <!--도서 등록 쿼리-->
     <insert id="insertBook">
         INSERT INTO SHOP_BOOK(
-            BOOK_NUM
-            ,BOOK_TITLE
-            ,AUTHOR
-            ,BOOK_PRICE
-            ,BOOK_INTRO
-            ,PUBLISH_DATE
-            ,CATE_NUM
+        BOOK_NUM
+        ,BOOK_TITLE
+        ,AUTHOR
+        ,BOOK_PRICE
+        ,BOOK_INTRO
+        ,PUBLISH_DATE
+        ,CATE_NUM
         )VALUES(
-            #{bookNum}
-            ,#{bookTitle}
-            ,#{author}
-            ,#{bookPrice}
-            ,#{bookIntro}
-            ,#{publishDate}
-            ,#{cateNum}
+        #{bookNum}
+        ,#{bookTitle}
+        ,#{author}
+        ,#{bookPrice}
+        ,#{bookIntro}
+        ,#{publishDate}
+        ,#{cateNum}
         )
     </insert>
 
     <!--도서 목록 조회 쿼리-->
     <select id="selectBook" resultMap="book">
-        SELECT BOOK_NUM
-            ,BOOK_TITLE
-            ,BOOK_PRICE
-        FROM SHOP_BOOK
+        SELECT B.BOOK_NUM
+        ,BOOK_TITLE
+        ,BOOK_PRICE
+        ,UPLOAD_FILE_NAME
+        FROM SHOP_BOOK B, BOOK_IMG I
+        WHERE B.BOOK_NUM = I.BOOK_NUM
+        AND IS_MAIN = 'Y'
+        ORDER BY BOOK_NUM DESC
     </select>
 
     <!--도서 상세 정보 조회 쿼리-->
     <select id="selectBookDetail" resultMap="book">
-        SELECT BOOK_NUM
-            ,BOOK_TITLE
-            ,AUTHOR
-            ,BOOK_PRICE
-        FROM SHOP_BOOK
-        WHERE BOOK_NUM = #{bookNum}
+        SELECT B.BOOK_NUM
+        ,BOOK_TITLE
+        ,AUTHOR
+        ,BOOK_PRICE
+        ,UPLOAD_FILE_NAME
+        ,IS_MAIN
+        FROM SHOP_BOOK B INNER JOIN BOOK_IMG I
+        ON B.BOOK_NUM = I.BOOK_NUM
+        WHERE B.BOOK_NUM = #{bookNum};
     </select>
 
     <select id="getNextBookNum" resultType="int">
         SELECT IFNULL(MAX(BOOK_NUM) , 0)  + 1
         FROM SHOP_BOOK;
     </select>
-	
+
 </mapper>
