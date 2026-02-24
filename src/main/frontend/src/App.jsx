@@ -10,6 +10,7 @@ import WebStorage from './WebStorage'
 import { useState } from 'react'
 import BookDetail from './pages/book/BookDetail'
 import Cart from './pages/cart/Cart'
+import MyPageLayout from './components/layout/MyPageLayout'
 
 function App() {
 
@@ -54,6 +55,11 @@ function App() {
 
 
         </Route>
+
+        <Route path='/myPage' element={<MyPageLayout/>}>
+          <Route path='cart' element={<Cart/>}/>
+        </Route>
+
       </Routes>
     </>
   )

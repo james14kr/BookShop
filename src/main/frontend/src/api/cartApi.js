@@ -1,6 +1,6 @@
 import axios from "axios"
 
-//장바구니 추가 함수
+//장바구니 등록 함수
 export const insertCart = async (cartData) => {
   try{
     const response = await axios.post('http://localhost:8080/cart', cartData)

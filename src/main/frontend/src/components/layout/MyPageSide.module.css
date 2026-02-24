@@ -1,7 +1,7 @@
 .container{
-  border: 1px solid black;
   padding: 12px;
   background-color: rgba(211, 211, 211, 0.09);
+  height: 100%;
 }
 
 .container > div:not(:first-child){
@@ -17,11 +17,6 @@
   display: flex;
   gap: 4px;
   padding-left: 8px;
-  font-size: 0.9rem;
-}
-
-.icon{
-  color: #673de6;
   font-size: 0.9rem;
 }
 

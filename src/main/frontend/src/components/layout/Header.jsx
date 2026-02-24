@@ -39,10 +39,9 @@ const Header = ({setLoginInfo}) => {
               </li>
               <li style={{cursor : 'pointer'}}
                 onClick={e => {
-                  nav('/cart');
-                }}
-              >
-                장바구니
+                  nav('/mypage');
+                }}>
+                마이페이지
               </li>
               <li style={{cursor : 'pointer'}}
                   onClick ={e => {
@@ -63,9 +62,6 @@ const Header = ({setLoginInfo}) => {
           src="/book_banner.PNG" 
         />
         <h3 className={styles.banner_title}>BOOK SHOP</h3>
-      </div>
-      <div>
-        일반사용자가 보는 메뉴
       </div>
     </div>
   )

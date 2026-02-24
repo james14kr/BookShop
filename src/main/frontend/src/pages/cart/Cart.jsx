@@ -1,30 +1,59 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import Button from '../../components/common/Button'
-import { selectCartList } from '../../api/cartApi';
+import { selectCartList, insertCart } from '../../api/cartApi'
 import styles from './Cart.module.css'
+import axios from 'axios'
 
 const Cart = () => {
   const nav = useNavigate()
-  const [cartList, setCartList] = useState([])
+  const [cartList, setCartList] = useState([]) 
 
-  const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"))
+  // 전체 합계 계산 
+  const totalPrice = cartList?.reduce((sum, item) => sum + (item.bookPrice * item.cartCnt), 0) || 0
 
-  const getCartList = async () => {
-    if (!loginInfo) return
-
-    try {
-      const response = await selectCartList(loginInfo.memEmail)
-      setCartList(response?.data ?? []) // 안전하게 배열 보장
-    } catch (e) {
-      console.error("장바구니 리스트 조회 에러", e)
-      setCartList([]) // 실패 시에도 빈 배열
+  // 로그인 체크 및 장바구니 데이터 조회
+  useEffect(() => {
+    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"))
+    if (!loginInfo) {
+      alert("로그인이 필요합니다.")
+      nav('/login')
+      return
     }
+
+    const fetchCartList = async () => {
+      try {
+        const response = await selectCartList(loginInfo.memEmail)
+        console.log("장바구니 API 응답:", response)
+        setCartList(response ?? [])
+      } catch (error) {
+        console.error("장바구니 조회 실패", error)
+        setCartList([])
+      }
+    }
+
+    fetchCartList()
+  }, [nav])
+
+  // 수량 변경
+  const handleQuantityChange = (cartNum, newCount) => {
+    setCartList((prev) =>
+      prev.map((item) =>
+        item.cartNum === cartNum ? { ...item, cartCnt: newCount } : item
+      )
+    )
   }
 
-  useEffect(() => {
-    getCartList()
-  }, [])
+  // // 아이템 삭제
+  // const handleDelete = async (cartNum) => {
+  //   try {
+  //     await axios.delete(`http://localhost:8080/cart/${cartNum}`)
+  //     setCartList((prev) => prev.filter((item) => item.cartNum !== cartNum))
+  //   } catch (error) {
+  //     console.error("장바구니 삭제 실패", error)
+  //     alert("삭제 실패")
+  //   }
+  // }
 
   return (
     <div className={styles.container}>
@@ -33,23 +62,56 @@ const Cart = () => {
       {(!cartList || cartList.length === 0) ? (
         <p>장바구니에 담긴 상품이 없습니다.</p>
       ) : (
-        <div>
-          {cartList.map((e, i) => (
-            <div key={i} className={styles.cartItem}>
-              <p>도서명 : {e.bookTitle}</p>
-              <p>가격 : {e.bookPrice?.toLocaleString()}원</p>
-              <p>수량 : {e.cartCnt}</p>
-              <p>총액 : {(e.bookPrice * e.cartCnt)?.toLocaleString()}원</p>
-            </div>
-          ))}
-        </div>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <td>No</td>
+              <td><input type="checkbox" /></td>
+              <td>도서정보</td>
+              <td>가격</td>
+              <td>수량</td>
+              <td>구매가격</td>
+              <td>장바구니 등록 일자</td>
+              <td>삭제</td>
+            </tr>
+          </thead>
+          <tbody>
+            {cartList.map((item) => (
+              <tr key={item.cartNum}>
+                <td>{item.cartNum}</td>
+                <td><input type="checkbox" /></td>
+                <td>{item.bookTitle}</td>
+                <td>{item.bookPrice.toLocaleString()}원</td>
+                <td>
+                  <input 
+                    type="number" 
+                    min={1} 
+                    value={item.cartCnt} 
+                    onChange={(e) => handleQuantityChange(item.cartNum, Number(e.target.value))}/>
+                </td>
+                <td>
+                  {(item.bookPrice * item.cartCnt).toLocaleString()}원
+                </td>
+                <td>{item.cartDate}</td>
+                <td>
+                  <Button title='삭제' onClick ={() => {handleDelete(item.cartNum)}}/>
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td colSpan={4}>전체 합계 : </td>
+              <td colSpan={4}>{totalPrice.toLocaleString()}원</td>
+            </tr>
+          </tbody>
+        </table>
       )}
 
       <div className={styles.btnBox}>
-        <Button 
-          title="계속 쇼핑하기"
+        <Button title="계속 쇼핑하기" size="medium" onClick={() => nav('/')} />
+        <Button
+          title="구매하기"
           size="medium"
-          onClick={() => nav('/')}
+          onClick={() => alert('구매 기능 구현 필요')}
         />
       </div>
     </div>

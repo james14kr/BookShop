@@ -59,12 +59,16 @@ const BookDetail = () => {
 
       console.log("장바구니 데이터 : " , cartData)
 
-
-      await insertCart(cartData);
-
-      alert("장바구니에 담겼습니다.");
-      nav('/cart');
-
+      if(cartData.cartCnt > 0){
+        await insertCart(cartData);
+        const goToCart = window.confirm("장바구니에 담았습니다. 장바구니 페이지로 갈까요?")
+      
+        if(goToCart){
+          nav('/cart')
+        }
+      }else{
+        alert("수량은 최소 1개 입니다.")
+      }
 
     }catch (e){
       console.error("카트 등록 에러", error)
@@ -105,7 +109,7 @@ const BookDetail = () => {
           </p>
 
           <p className={styles.price}>
-            가격 : {bookDetailData.bookPrice?.toLocaleString()}
+            가격 : {bookDetailData.bookPrice?.toLocaleString()}원
           </p>
 
           {/* 수량 */}
@@ -121,7 +125,7 @@ const BookDetail = () => {
 
           {/* 총 가격 */}
           <p className={styles.total}>
-            총 구매 가격 : {totalPrice.toLocaleString()}
+            총 구매 가격 : {totalPrice.toLocaleString()}원
           </p>
 
           <div className={styles.btn_div}>
