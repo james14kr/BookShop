@@ -89,7 +89,7 @@ const Login = ({setLoginInfo}) => {
             />
         </div>
         <div> 
-          <Button size='medium' onClick={goLogin}/>
+          <Button title='로그인' size='medium' onClick={goLogin}/>
         </div>
       </div>
     </div>

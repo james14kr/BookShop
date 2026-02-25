@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,5 +18,6 @@ public class CartDTO {
   private int bookPrice;    // 책 가격
   private int cartCnt;      // 수량
   private String memEmail;  // 장바구니 주인 이메일
-  private LocalDate cartDate; // 장바구니 담은 날짜
+  private LocalDateTime cartDate; // 장바구니 담은 날짜
+  private String uploadFileName;
 }

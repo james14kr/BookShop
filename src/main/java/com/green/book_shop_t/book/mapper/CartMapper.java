@@ -14,4 +14,10 @@ public interface CartMapper {
   //카트 리시트 조회 실행 메서드
   List<CartDTO> selectCartList(String memEmail);
 
+  //장바구니 상품 삭제 실행 메서드
+  void deleteContent(int cartNum);
+
+  //장바구니 수량 수정 실행 메서드
+  void updateCart(CartDTO cartDTO);
+
 }

@@ -24,4 +24,15 @@ public class CartService {
     return cartMapper.selectCartList(memEmail);
   }
 
+  //장바구니 상품 삭제 기능 메서드
+
+  public void deleteCart(int cartNum){
+    cartMapper.deleteContent(cartNum);
+  }
+
+  //장바구니 수정 기능 메서드
+  public void updateCartContent(CartDTO cartDTO){
+    cartMapper.updateCart(cartDTO);
+  }
+
 }

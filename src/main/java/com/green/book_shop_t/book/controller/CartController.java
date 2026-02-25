@@ -43,4 +43,28 @@ public class CartController {
     }
   }
 
+  //장바구니 상품 삭제 api
+  @DeleteMapping("/cart/{cartNum}")
+  public ResponseEntity<?> deleteContent(@PathVariable("cartNum") int cartNum){
+    try {
+      cartService.deleteCart(cartNum);
+      return ResponseEntity.status(HttpStatus.CREATED).build();
+    } catch (Exception e) {
+      log.error("장바구니 상품 삭제 기능 에러",e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  //장바구니 수량 수정 api
+  @PutMapping("cart")
+  public ResponseEntity<?> updateCartContent(@RequestBody CartDTO cartDTO){
+    try {
+      cartService.updateCartContent(cartDTO);
+      return ResponseEntity.status(HttpStatus.CREATED).build();
+    } catch (Exception e) {
+      log.error("장바구니 수정 api 에러", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
 }

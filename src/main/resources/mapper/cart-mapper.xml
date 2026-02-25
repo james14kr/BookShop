@@ -12,8 +12,10 @@
         <result column="CART_CNT" property="cartCnt"/>
         <result column="MEM_EMAIL" property="memEmail"/>
         <result column="CART_DATE" property="cartDate"/>
+        <result column="UPLOAD_FILE_NAME" property="uploadFileName"></result>
     </resultMap>
 
+    <!--장바구니 등록 쿼리-->
     <insert id="insertCart">
         INSERT INTO SHOP_CART(
             BOOK_NUM
@@ -23,21 +25,41 @@
             #{bookNum}
             ,#{cartCnt}
             ,#{memEmail}
-        )
+        )ON DUPLICATE KEY UPDATE
+            CART_CNT = CART_CNT + #{cartCnt}
     </insert>
 
+    <!--장바구니 조회 쿼리-->
     <select id="selectCartList" resultMap="cart">
-        SELECT C.CART_NUM
-            ,B.BOOK_NUM
-            ,B.BOOK_TITLE
-            ,B.BOOK_PRICE
-            ,C.CART_CNT
-            ,C.CART_DATE
-        FROM SHOP_CART C INNER JOIN SHOP_BOOK B
-        ON C.BOOK_NUM = B.BOOK_NUM
+        SELECT C.CART_NUM,
+            B.BOOK_TITLE,
+            B.BOOK_PRICE,
+            C.CART_CNT,
+            C.CART_DATE,
+            I.UPLOAD_FILE_NAME
+        FROM SHOP_CART C
+        INNER JOIN SHOP_BOOK B
+            ON C.BOOK_NUM = B.BOOK_NUM
+        LEFT JOIN BOOK_IMG I
+            ON I.BOOK_NUM = B.BOOK_NUM
+        AND I.IS_MAIN = 'Y'
         WHERE C.MEM_EMAIL = #{memEmail}
-        ORDER BY C.CART_NUM DESC;
+        ORDER BY C.CART_DATE DESC
     </select>
+
+    <!--장바구니 상품 삭제 쿼리-->
+    <delete id="deleteContent">
+        DELETE FROM SHOP_CART
+        WHERE CART_NUM = #{cartNum}
+    </delete>
+
+    <!--장바구니 수량 수정 쿼리-->
+    <update id="updateCart">
+        UPDATE SHOP_CART
+        SET CART_CNT = #{cartCnt}
+        WHERE BOOK_NUM = #{bookNum}
+        AND MEM_EMAIL = #{memEmail}
+    </update>
 
 </mapper>
 

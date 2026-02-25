@@ -1,9 +1,50 @@
-.container{
+.container {
+  min-height: 40vh;           /* 화면 중앙 정렬용 */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.loginForm > div{
-  margin-bottom: 10px;
+/* 로그인 박스 */
+.loginForm {
+  width: 380px;
+  padding: 40px 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 제목 */
+.loginForm h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* 입력칸 간격 */
+.loginForm > div {
+  margin-bottom: 15px;
+}
+
+/* input 기본 스타일 */
+.loginForm input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* input focus 효과 */
+.loginForm input:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
+}
+
+/* 버튼 영역 */
+.loginForm button {
+  width: 100%;
+  margin-top: 10px;
 }

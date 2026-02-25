@@ -14,7 +14,9 @@ import MyPageLayout from './components/layout/MyPageLayout'
 
 function App() {
 
-  const [loginInfo, setLoginInfo] = useState({});
+  const [loginInfo, setLoginInfo] = useState(
+    JSON.parse(sessionStorage.getItem("loginInfo"))
+  );
 
   return (
     <>
@@ -56,7 +58,7 @@ function App() {
 
         </Route>
 
-        <Route path='/myPage' element={<MyPageLayout/>}>
+        <Route path='/myPage' element={<MyPageLayout setLoginInfo={setLoginInfo}/>}>
           <Route path='cart' element={<Cart/>}/>
         </Route>
 
