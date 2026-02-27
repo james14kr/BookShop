@@ -1,69 +1,99 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './Header.module.css'
 import { Link, useNavigate } from 'react-router-dom'
 
-//일반 사용자가 보는 페이지의 헤더 영역
+const Header = ({ setLoginInfo }) => {
+  const nav = useNavigate()
+  const [scrolled, setScrolled] = useState(false)
 
-const Header = ({setLoginInfo}) => {
+  const loginInfo = sessionStorage.getItem('loginInfo')
+  const loginInfo2 = JSON.parse(loginInfo)
 
-  const nav = useNavigate();
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
-  //로그인 여부를 확인
-  //json 타입으로 가져옴(문자열)
-  const loginInfo = sessionStorage.getItem('loginInfo');
-  console.log(loginInfo);
-
-  //json 데이터를 객체로 변환
-  const loginInfo2 = JSON.parse(loginInfo);
-  console.log(loginInfo2);
+  const handleLogout = () => {
+    sessionStorage.removeItem('loginInfo')
+    setLoginInfo({})
+    nav('/')
+  }
 
   return (
-    <div>
-      <div className={styles.top_menu}>
-        <ul>
-          {
-            loginInfo == null 
-            ? 
-            <>
-              <li>
-                <Link to='/login'>Login</Link>
-              </li>
-              <li>
-                <Link to='/join'>Join</Link>
-              </li>
-            </>
-            :
-            <>
-              <li>
-                {loginInfo2.memEmail}님 반갑습니다.
-              </li>
-              <li style={{cursor : 'pointer'}}
-                onClick={e => {
-                  nav('/mypage');
-                }}>
-                마이페이지
-              </li>
-              <li style={{cursor : 'pointer'}}
-                  onClick ={e => {
-                  sessionStorage.removeItem('loginInfo'); 
-                  setLoginInfo({});
-                  nav('/');
-                }}>
-                LogOut
-              </li>
-            </>
-          }
+    <header className={styles.root}>
 
-        </ul>
+      {/* ── 상단 유틸 바 ── */}
+      <div className={`${styles.utilBar} ${scrolled ? styles.utilBarScrolled : ''}`}>
+        <nav className={styles.utilInner}>
+
+          {/* 로고 */}
+          <Link to="/" className={styles.logo}>
+            Book<span className={styles.logoDot}>.</span>store
+          </Link>
+
+          {/* 우측 메뉴 */}
+          <ul className={styles.utilNav}>
+            {loginInfo == null ? (
+              <>
+                <li>
+                  <Link to="/login" className={styles.utilLink}>Login</Link>
+                </li>
+                <li className={styles.divider} />
+                <li>
+                  <Link to="/join" className={styles.joinBtn}>Join</Link>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className={styles.greeting}>
+                  <span className={styles.greetingDot} />
+                  {loginInfo2.memEmail}님
+                </li>
+                <li>
+                  <button
+                    className={styles.utilLink}
+                    onClick={() => nav('/mypage')}
+                  >
+                    마이페이지
+                  </button>
+                </li>
+                <li className={styles.divider} />
+                <li>
+                  <button
+                    className={styles.logoutBtn}
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            )}
+          </ul>
+        </nav>
       </div>
-      <div className={styles.banner_div}>
-        <img  
-          className={styles.banner_img}
-          src="/book_banner.PNG" 
+
+      {/* ── 배너 영역 ── */}
+      <div className={styles.banner}>
+        <img
+          className={styles.bannerImg}
+          src="/book_banner.PNG"
+          alt="book banner"
         />
-        <h3 className={styles.banner_title}>BOOK SHOP</h3>
+
+        {/* 오버레이 */}
+        <div className={styles.bannerOverlay} />
+
+        {/* 배너 텍스트 */}
+        <div className={styles.bannerContent}>
+          <p className={styles.bannerEyebrow}>curated reads for curious minds</p>
+          <h1 className={styles.bannerTitle}>BOOK SHOP</h1>
+          <div className={styles.bannerAccent} />
+        </div>
       </div>
-    </div>
+
+    </header>
   )
 }
 

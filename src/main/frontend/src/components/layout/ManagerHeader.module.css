@@ -1,17 +1,151 @@
-.container{
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
+
+/* ── 헤더 루트 ── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: #1a1a2e;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: box-shadow 0.3s ease;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.headerScrolled {
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.3);
+}
+
+/* ── 내부 레이아웃 ── */
+.inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 64px;
+  padding: 0 40px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-    background-color: rgba(211, 211, 211, 0.09);
+  justify-content: space-between;
 }
 
-.logo{
-  width: 300px;
-  height: 70px;
-  object-fit: cover;
-}
-
-.container > ul{
+/* ── 좌측: 로고 + 뱃지 ── */
+.left {
   display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  /* 로고 이미지가 밝으면 필터 없이, 어두우면 아래 주석 해제 */
+  /* filter: brightness(0) invert(1); */
+  opacity: 0.9;
+}
+
+/* 관리자 뱃지 */
+.adminBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(201, 169, 110, 0.1);
+  border: 1px solid rgba(201, 169, 110, 0.25);
+  border-radius: 20px;
+  font-size: 0.62rem;
+  color: #c9a96e;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+}
+
+.badgeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c9a96e;
+  box-shadow: 0 0 6px rgba(201, 169, 110, 0.7);
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ── 우측: 유저 정보 + 로그아웃 ── */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 유저 정보 */
+.userInfo {
+  display: flex;
+  align-items: center;
   gap: 10px;
+  padding: 0 8px;
+}
+
+/* 아바타 원형 */
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c9a96e, #e8c98a);
+  color: #1a1a2e;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+
+.email {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.02em;
+}
+
+/* 구분선 */
+.divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 6px;
+}
+
+/* 로그아웃 버튼 */
+.logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+  border-color: rgba(224, 5, 80, 0.5);
+  color: #ff4d7e;
+  background: rgba(224, 5, 80, 0.06);
+}
+
+.logoutIcon {
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+.logoutBtn:hover .logoutIcon {
+  transform: translateX(-2px);
 }

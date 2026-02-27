@@ -1,292 +1,307 @@
 import React, { useEffect, useState } from 'react'
-import Button from '../../components/common/Button'
-import Input from '../../components/common/Input'
 import styles from './Join.module.css'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { checkEmail, insertInfo } from '../../api/memberApi.js'
-import { FaSlack } from 'react-icons/fa6'
-import Postcode from '../../Postcode.jsx'
-import { useDaumPostcodePopup } from 'react-daum-postcode';
+import { useDaumPostcodePopup } from 'react-daum-postcode'
+import { Link } from 'react-router-dom'
 
 const Join = () => {
-
-  // const test1 = () => {
-  //   alert(1);
-  // }
-
-  const nav = useNavigate();
-  
-  //다음 주소록 사용을 위한 선언
+  const nav = useNavigate()
   const scriptUrl = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'
-  const open = useDaumPostcodePopup(scriptUrl);
+  const open = useDaumPostcodePopup(scriptUrl)
 
-  //입력한 정보를 저장할 state 변수
-  const[info, setInfo] = useState({
-    memEmail : '',
-    memPw : '',
-    confirmPw : '',
-    memName : '',
-    memTel : '',
-    tel1 : '',
-    tel2 : '',
-    tel3 : '',
-    memAddr : '',
-    addrDetail : ''
-  });
-
-  //유효성 검사(Validation) 결과 에러 메세지를 저장하는 state변수
-  const [errors, setErrors] = useState({
-    memEmail : '',
-    memPw : '',
-    confirmPw : '',
-    memName : '',
-    memTel : '',
-  });
-
-  //마운트 시점인지 판단을 위한 state 변수
-  //cnt 값이 0일때가 마운트 시점
-  const[cnt, setCnt] = useState(0);
-
-  //
-  useEffect(() => {
-    if(cnt == 0){
-      setCnt(cnt + 1)
-    }
+  const [info, setInfo] = useState({
+    memEmail: '', memPw: '', confirmPw: '',
+    memName: '', memTel: '',
+    tel1: '', tel2: '', tel3: '',
+    memAddr: '', addrDetail: ''
   })
 
-  //유효성 검사함수(값 입력할 때 마다 실행)
-  const validateField = (name, value) => {
-    let errorMsg = ''; 
-    switch(name){
-      case 'memEmail' : 
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; //이메일 형식 정규식
-        if(value.length < 5){
-          errorMsg = '이메일은 5글자 이상이어야 합니다.';
-        }else if(value.length > 50){
-          errorMsg = '이메일은 최대 50글자입니다.';
-        }else if(!emailPattern.test(value)){
-          errorMsg = '이메일 형식이 맞지 않습니다.'
-        }
-        break;
-      case 'memPw' : 
-        const pwPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{4,50}$/; //비밀번호 형식 정규식
-        if(value.length < 1){
-          errorMsg = '비밀번호는 필수 입력입니다.'
-        }else if(!pwPattern.test(value)){
-          errorMsg = '비밀번호는 영문, 숫자 조합 4~50글자 가능합니다.'
-        }
-        break;      
-      case "memName" :
-        if(value.length < 1){
-          errorMsg = '이름은 필수 입력입니다.'
-        }else if(value.length > 30){
-          errorMsg = '이름은 최대 30글자입니다.'
-        }
-        break;
-      case 'tel1' : 
-        const telPattern1 = /^[0-9]{3}$/; //연락처 정규식
-        if(!telPattern1.test(value)){
-          errorMsg = '연락처 형식이 맞지 않습니다.'
-        }
-        break; 
-      case 'tel2' : 
-        const telPattern2 = /^[0-9]{3,4}$/; //연락처 정규식
-        if(!telPattern2.test(value)){
-          errorMsg = '연락처 형식이 맞지 않습니다.'
-        }
-        break; 
-      case 'tel3' : 
-        const telPattern3 = /^[0-9]{4}$/; //연락처 정규식
-        if(!telPattern3.test(value)){
-          errorMsg = '연락처 형식이 맞지 않습니다.'
-        }
-        break; 
-        
-    }
+  const [errors, setErrors] = useState({
+    memEmail: '', memPw: '', confirmPw: '',
+    memName: '', memTel: '',
+  })
 
-    return errorMsg;
+  const [cnt, setCnt] = useState(0)
+  const [isDesable, setIsDesable] = useState(true)
+  const [emailChecked, setEmailChecked] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  }
-
-  //회원가입 버튼 활성화 여부를 지정하는 state
-  const [isDesable, setIsDesable] = useState(true); 
-
-  console.log(info);
-
-  //입력할 때 마다 실행하는 함수
-  const handleInfo = (e) => {
-    //e -> 이벤트의 모든 정보가 담긴 객체
-    const {name, value} = e.target; //구조분해할당
-
-    // //정규식 테스트
-    // const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    // const vaild = emailRegex.test(value);
-    // console.log(vaild);
-
-    setInfo( prev => ({...prev, /*info의 최신 데이터*/[name] : value})
-    )
-
-    //만약 연락처를 변경하고 있다면
-    if(name === 'tel1' || name === 'tel2' || name === 'tel3'){
-      setInfo( prev => ({...prev, memTel : `${prev.tel1}-${prev.tel2}-${prev.tel3}`}))
-    }
-
-    //이메일 변경하고 있다면..
-    if(name == 'memEmail'){
-      setIsDesable(true);
-    }
-
-    //유효성 검사 실행
-    const errorMsg = validateField(name, value);
-
-    const keyName = name === 'tel1' || name === 'tel2' || name === 'tel3' ? 'memTel' : name;
-
-    setErrors((prev) => {
-      return{
-        ...prev,
-        [keyName] : errorMsg
-      }
-    })
-    
-  }
-
-  //erros 객체의 모든 key에 대한 value가 빈 문자인지 확인하는 코드
-  //errors값이 변경되어 리렌더링 됐을때 실행
   useEffect(() => {
+    if (cnt === 0) setCnt(cnt + 1)
+  })
 
-    //마운트 시점에는 실행 안함
-    if(cnt == 0){
-      return;
+  const validateField = (name, value) => {
+    let errorMsg = ''
+    switch (name) {
+      case 'memEmail':
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        if (value.length < 5) errorMsg = '이메일은 5글자 이상이어야 합니다.'
+        else if (value.length > 50) errorMsg = '이메일은 최대 50글자입니다.'
+        else if (!emailPattern.test(value)) errorMsg = '이메일 형식이 맞지 않습니다.'
+        break
+      case 'memPw':
+        const pwPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{4,50}$/
+        if (value.length < 1) errorMsg = '비밀번호는 필수 입력입니다.'
+        else if (!pwPattern.test(value)) errorMsg = '비밀번호는 영문, 숫자 조합 4~50글자 가능합니다.'
+        break
+      case 'memName':
+        if (value.length < 1) errorMsg = '이름은 필수 입력입니다.'
+        else if (value.length > 30) errorMsg = '이름은 최대 30글자입니다.'
+        break
+      case 'tel1':
+        if (!/^[0-9]{3}$/.test(value)) errorMsg = '연락처 형식이 맞지 않습니다.'
+        break
+      case 'tel2':
+        if (!/^[0-9]{3,4}$/.test(value)) errorMsg = '연락처 형식이 맞지 않습니다.'
+        break
+      case 'tel3':
+        if (!/^[0-9]{4}$/.test(value)) errorMsg = '연락처 형식이 맞지 않습니다.'
+        break
+    }
+    return errorMsg
+  }
+
+  const handleInfo = (e) => {
+    const { name, value } = e.target
+    setInfo(prev => ({ ...prev, [name]: value }))
+
+    if (name === 'tel1' || name === 'tel2' || name === 'tel3') {
+      setInfo(prev => ({ ...prev, memTel: `${prev.tel1}-${prev.tel2}-${prev.tel3}` }))
     }
 
-    //errors 객체의 모든 value가 빈문자인지 확인, -> return true
-    const result = Object.values(errors).every(value => value === '');
-    console.log(result)
-
-    if(result){
-      setIsDesable(false);
-    }else{
+    if (name === 'memEmail') {
       setIsDesable(true)
+      setEmailChecked(false)
     }
 
+    const errorMsg = validateField(name, value)
+    const keyName = name === 'tel1' || name === 'tel2' || name === 'tel3' ? 'memTel' : name
+    setErrors(prev => ({ ...prev, [keyName]: errorMsg }))
+  }
+
+  useEffect(() => {
+    if (cnt === 0) return
+    const result = Object.values(errors).every(v => v === '')
+    setIsDesable(!result)
   }, [errors])
 
-  //회원가입 버튼을 클릭 시 실행하는 함수
   const regInfo = async () => {
-    const response = await insertInfo(info);
-    if(response.status === 201){
-      alert('회원가입을 축하합니다')
-      nav('/login')
-    }else{
-      alert('오류 발생!!')
+    setLoading(true)
+    try {
+      const response = await insertInfo(info)
+      if (response.status === 201) {
+        alert('회원가입을 축하합니다')
+        nav('/login')
+      } else {
+        alert('오류 발생!')
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
-  //중복확인 버튼을 클릭 시 실행하는 함수
   const checkId = async () => {
-    const response = await checkEmail(info.memEmail);
-    if(response.data){
-      alert('아이디 중복')
-    }else{
-      alert('아이디 사용 가능')
+    const response = await checkEmail(info.memEmail)
+    if (response.data) {
+      alert('이미 사용 중인 이메일입니다.')
+    } else {
+      setEmailChecked(true)
       setIsDesable(false)
     }
   }
 
-  //주소 검색 팝업에서 주소 선택시 실행하는 함수
   const handleComplete = (data) => {
-    //선택한 도로명 주소를 주소 입력창에 세팅
-    console.log(data);
-    setInfo({...info, memAddr : data.address})
+    setInfo(prev => ({ ...prev, memAddr: data.address }))
   }
 
   return (
     <div className={styles.container}>
-      <div>
-        <p>Email</p>
-        <div className={styles.id_div}>
-          <Input name='memEmail' value={info.memEmail} onChange={e => handleInfo(e)}/>
-          <Button title='중복확인' onClick={checkId}/>
-        </div>
-        {errors.memEmail && <p className='error'>{errors.memEmail}</p>}
-      </div>
-      <div>
-        <p>Password</p>
-        <Input type='password' name='memPw' value={info.memPw} onChange={e => handleInfo(e)}/>
-        {errors.memPw && <p className='error'>{errors.memPw}</p>}
-      </div>
-      <div>
-        <p>Confirm Password</p>
-        <Input type='password' name='confirmPw' value={info.confirmPw} onChange={e => handleInfo(e)}/>
-      </div>
-      <div>
-        <p>Name</p>
-        <Input name='memName' value={info.memName} onChange={e => handleInfo(e)}/>
-        {errors.memName && <p className='error'>{errors.memName}</p>}
-      </div>
-      <div>
-        <p>Tel</p>
-        <div className={styles.tel_div}>
-          <Input name='tel1' value={info.tel1} onChange={handleInfo}/>
-          <Input name='tel2' value={info.tel2} onChange={handleInfo}/>
-          <Input name='tel3' value={info.tel3} onChange={handleInfo}/>
-        </div>
-        {errors.memTel && <p className='error'>{errors.memTel}</p>}
-      </div>  
-      <div>
-        <p>Address</p>
-        <div className={styles.address_div}>
-          <Input readOnly={true} name= 'memAddr' value={info.memAddr} onChange={e => handleInfo(e)} onClick={() => open({ onComplete: handleComplete })}/>
-          <Button 
-            title='검색' 
-            variant='gray' 
-            onClick={() => open({ onComplete: handleComplete })}/>
-        </div>
-        <Input name= 'addrDetail' value={info.addrDetail} onChange={e => handleInfo(e)}/>
-      </div>
-      <div className={styles.btn_div}>
-        <Button title='회원가입' onClick={regInfo} disabled={isDesable}/>
-      </div>
-      
+      <div className={styles.bgOrb1} />
+      <div className={styles.bgOrb2} />
 
-      {/* <Button 
-        title = 'aaa' 
-        variant = 'purple'
-        size = 'small'
-        onClick = {test1}/>
-      <Button 
-        title = '자바'
-        variant = 'green'
-        size = 'medium'/>
-      <Button 
-        title = '자바'
-        variant = 'gray'
-        size = 'medium'/>
-      <Button/>
+      <div className={styles.card}>
+        {/* 헤더 */}
+        <div className={styles.cardHeader}>
+          <Link to="/" className={styles.logoMark}>
+            Book<span className={styles.logoDot}>.</span>store
+          </Link>
+          <h2 className={styles.title}>회원가입</h2>
+          <p className={styles.subtitle}>새 계정을 만들어 도서를 즐겨보세요</p>
+        </div>
 
-      <br />
+        {/* 폼 */}
+        <div className={styles.form}>
 
-      <Input
-        type="password"
-        name='aaa'
-        value={10}
-        onChange={e => console.log(e)}
-      />
-      <br />
-      <Input
-        type="number"
-        name='aaa'
-        value={10}
-        onChange={e => console.log(e)}
-      />
-      <br />
-      <Input
-        type="number"
-        name='aaa'
-        value={10}
-        onChange={e => console.log(e)}
-      />
-      <br /> */}
+          {/* 이메일 */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>이메일</label>
+            <div className={styles.inlineRow}>
+              <div className={styles.inputWrap} style={{ flex: 1 }}>
+                <span className={styles.inputIcon}>✉</span>
+                <input
+                  className={`${styles.input} ${emailChecked ? styles.inputSuccess : ''}`}
+                  placeholder="example@email.com"
+                  name="memEmail"
+                  type="email"
+                  value={info.memEmail}
+                  onChange={handleInfo}
+                />
+              </div>
+              <button
+                className={`${styles.checkBtn} ${emailChecked ? styles.checkBtnDone : ''}`}
+                onClick={checkId}
+                type="button"
+              >
+                {emailChecked ? '✓ 확인됨' : '중복확인'}
+              </button>
+            </div>
+            {errors.memEmail && <p className={styles.errorMsg}>⚠ {errors.memEmail}</p>}
+          </div>
+
+          {/* 비밀번호 */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>비밀번호</label>
+            <div className={styles.inputWrap}>
+              <span className={styles.inputIcon}>🔒</span>
+              <input
+                className={styles.input}
+                placeholder="영문 + 숫자 조합 4자 이상"
+                type="password"
+                name="memPw"
+                value={info.memPw}
+                onChange={handleInfo}
+              />
+            </div>
+            {errors.memPw && <p className={styles.errorMsg}>⚠ {errors.memPw}</p>}
+          </div>
+
+          {/* 비밀번호 확인 */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>비밀번호 확인</label>
+            <div className={styles.inputWrap}>
+              <span className={styles.inputIcon}>🔒</span>
+              <input
+                className={`${styles.input} ${
+                  info.confirmPw && info.confirmPw !== info.memPw ? styles.inputError : ''
+                } ${info.confirmPw && info.confirmPw === info.memPw ? styles.inputSuccess : ''}`}
+                placeholder="비밀번호를 다시 입력하세요"
+                type="password"
+                name="confirmPw"
+                value={info.confirmPw}
+                onChange={handleInfo}
+              />
+            </div>
+            {info.confirmPw && info.confirmPw !== info.memPw && (
+              <p className={styles.errorMsg}>⚠ 비밀번호가 일치하지 않습니다.</p>
+            )}
+          </div>
+
+          {/* 이름 */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>이름</label>
+            <div className={styles.inputWrap}>
+              <span className={styles.inputIcon}>👤</span>
+              <input
+                className={styles.input}
+                placeholder="이름을 입력하세요"
+                name="memName"
+                value={info.memName}
+                onChange={handleInfo}
+              />
+            </div>
+            {errors.memName && <p className={styles.errorMsg}>⚠ {errors.memName}</p>}
+          </div>
+
+          {/* 연락처 */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>연락처</label>
+            <div className={styles.telRow}>
+              <input
+                className={`${styles.input} ${styles.telInput}`}
+                placeholder="010"
+                name="tel1"
+                maxLength={3}
+                value={info.tel1}
+                onChange={handleInfo}
+              />
+              <span className={styles.telDash}>—</span>
+              <input
+                className={`${styles.input} ${styles.telInput}`}
+                placeholder="0000"
+                name="tel2"
+                maxLength={4}
+                value={info.tel2}
+                onChange={handleInfo}
+              />
+              <span className={styles.telDash}>—</span>
+              <input
+                className={`${styles.input} ${styles.telInput}`}
+                placeholder="0000"
+                name="tel3"
+                maxLength={4}
+                value={info.tel3}
+                onChange={handleInfo}
+              />
+            </div>
+            {errors.memTel && <p className={styles.errorMsg}>⚠ {errors.memTel}</p>}
+          </div>
+
+          {/* 주소 */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>주소</label>
+            <div className={styles.inlineRow}>
+              <div className={styles.inputWrap} style={{ flex: 1 }}>
+                <span className={styles.inputIcon}>📍</span>
+                <input
+                  className={styles.input}
+                  readOnly
+                  placeholder="주소 검색을 클릭하세요"
+                  name="memAddr"
+                  value={info.memAddr}
+                  onClick={() => open({ onComplete: handleComplete })}
+                  style={{ cursor: 'pointer' }}
+                />
+              </div>
+              <button
+                className={styles.checkBtn}
+                onClick={() => open({ onComplete: handleComplete })}
+                type="button"
+              >
+                검색
+              </button>
+            </div>
+            <div className={styles.inputWrap} style={{ marginTop: 8 }}>
+              <span className={styles.inputIcon}>🏠</span>
+              <input
+                className={styles.input}
+                placeholder="상세 주소를 입력하세요"
+                name="addrDetail"
+                value={info.addrDetail}
+                onChange={handleInfo}
+              />
+            </div>
+          </div>
+
+          {/* 구분선 */}
+          <div className={styles.divider} />
+
+          {/* 가입 버튼 */}
+          <button
+            className={`${styles.submitBtn} ${isDesable ? styles.submitBtnDisabled : ''}`}
+            onClick={regInfo}
+            disabled={isDesable || loading}
+            type="button"
+          >
+            {loading ? <span className={styles.spinner} /> : '회원가입'}
+          </button>
+
+          <p className={styles.loginPrompt}>
+            이미 계정이 있으신가요?{' '}
+            <Link to="/login" className={styles.loginLink}>로그인</Link>
+          </p>
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,78 +1,129 @@
-/* 카드 */
-.productCard {
-  border-radius: 16px;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  transition: all 0.25s ease;
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
+
+/* ── 카드 ── */
+.card {
+  font-family: 'Noto Sans KR', sans-serif;
   cursor: pointer;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.28s ease, transform 0.28s ease, border-color 0.28s ease;
+  animation: fadeUp 0.45s ease both;
 }
 
-/* 이미지 영역 */
-.productCard img {
+.cardHovered {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+  border-color: rgba(201, 169, 110, 0.3);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 이미지 래퍼 ── */
+.imgWrap {
+  position: relative;
   width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.35s ease;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e8e0d4, #d5c9bb);
 }
 
-.detail{
-  position: absolute;
-  top: 0px;
-  left: 0px;
+.img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
 
+.imgZoomed {
+  transform: scale(1.06);
+}
+
+/* ── 오버레이 ── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.52);
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-
-  background-color: rgba(0,0,0,0.45);
-  color: #fff;
-  font-weight: 700;
+  gap: 8px;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.28s ease;
+  backdrop-filter: blur(2px);
 }
 
-.img_div:hover .detail{
-  opacity: 0.4;
+.overlayVisible {
+  opacity: 1;
 }
 
-
-
-.img_div{
-  position: relative;
-  overflow: hidden;
+.overlayText {
+  font-size: 0.82rem;
+  color: #fff;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
-/* 이미지 확대 효과 */
-.productCard:hover img {
-  transform: scale(1.04);
+.overlayArrow {
+  font-size: 1.3rem;
+  color: #e8c98a;
+  transform: translateY(4px);
+  transition: transform 0.25s ease;
 }
 
-/* 정보 영역 */
-.productInfo {
-  padding: 14px;
-  text-align: left;
+.overlayVisible .overlayArrow {
+  transform: translateY(0);
 }
 
-/* 상품명 */
-.productName {
-  font-size: 12px;
-  font-weight: 600;
-  color: #1f1f1f;
-  line-height: 1.4;
-  margin-bottom: 10px;
+/* ── 골드 액센트 바 ── */
+.accentBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #c9a96e, #e8c98a);
+  transition: width 0.4s ease;
+  border-radius: 0 2px 0 0;
 }
 
-/* 가격 영역 */
-.productPrice {
-  font-size: 14px;
-  font-weight: 800;
-  color: #5b3fff; 
+.accentBarVisible {
+  width: 100%;
+}
+
+/* ── 정보 영역 ── */
+.info {
+  padding: 16px 18px 18px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 6px;
 }
 
+.title {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  letter-spacing: 0.01em;
+  line-height: 1.45;
 
+  /* 2줄 말줄임 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.price {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: #c9a96e;
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}

@@ -1,27 +1,47 @@
-import React from 'react'
-import styles from './EachBook.Module.css'
-import { data, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import styles from './EachBook.module.css'
+import { useNavigate } from 'react-router-dom'
 
-const EachBook = ({book}) => {
-  const nav = useNavigate();
+const EachBook = ({ book }) => {
+  const nav = useNavigate()
+  const [hovered, setHovered] = useState(false)
 
   const goDetail = () => {
     nav(`/books/${book.bookNum}`)
   }
 
   return (
-    <div className={styles.productCard} onClick={goDetail}>
-      <div className={styles.img_div}>
-        <img src={`http://localhost:8080/upload/${book.bookImgList[0].uploadFileName}`}/>
-        <div className={styles.detail}>상세보기</div>
+    <div
+      className={`${styles.card} ${hovered ? styles.cardHovered : ''}`}
+      onClick={goDetail}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* ── 이미지 영역 ── */}
+      <div className={styles.imgWrap}>
+        <img
+          src={`http://localhost:8080/upload/${book.bookImgList[0].uploadFileName}`}
+          alt={book.bookTitle}
+          className={`${styles.img} ${hovered ? styles.imgZoomed : ''}`}
+        />
+
+        {/* 오버레이 */}
+        <div className={`${styles.overlay} ${hovered ? styles.overlayVisible : ''}`}>
+          <span className={styles.overlayText}>상세보기</span>
+          <span className={styles.overlayArrow}>→</span>
+        </div>
+
+        {/* 골드 액센트 바 (하단) */}
+        <div className={`${styles.accentBar} ${hovered ? styles.accentBarVisible : ''}`} />
       </div>
-      <div  className={styles.productInfo}>
-        <p  className={styles.productName}>제목 : {book.bookTitle}</p>
-        <p  className={styles.productPrice}>가격 : {book.bookPrice.toLocaleString()}원</p>
+
+      {/* ── 정보 영역 ── */}
+      <div className={styles.info}>
+        <p className={styles.title}>{book.bookTitle}</p>
+        <p className={styles.price}>{book.bookPrice.toLocaleString()}원</p>
       </div>
     </div>
   )
 }
 
 export default EachBook
-

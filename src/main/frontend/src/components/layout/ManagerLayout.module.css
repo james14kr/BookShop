@@ -1,20 +1,39 @@
-.container{
-  width: 1200px;
-  border: 1px solid black;
-  margin: 0 auto;
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
+
+/* ── 루트 컨테이너 ── */
+.container {
+  min-height: 100vh;
+  background: #13131f;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
-.main{
+/* ── 메인 영역 (사이드 + 콘텐츠) ── */
+.main {
   display: flex;
+  min-height: calc(100vh - 64px);
 }
 
-.side{
-  width: 15%;
-  border: 1px solid black;
+/* ── 사이드바 ── */
+.side {
+  width: 220px;
+  flex-shrink: 0;
+  background: #1a1a2e;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
 }
 
-.content{
-  width: 85%;
-  border: 1px solid black;
+/* ── 콘텐츠 영역 ── */
+.content {
+  flex: 1;
+  background: #13131f;
+  padding: 44px 52px;
+  min-height: calc(100vh - 64px);
+  /* 미묘한 그리드 패턴 배경 */
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
-

@@ -5,7 +5,7 @@ const MyPageSide = () => {
   return (
     <div className={styles.container}>
       <div>
-        {/* <h5>마이페이지</h5> */}
+        <h2>MY PAGE</h2>
         <ul>
           <li>
             <p>장바구니</p>

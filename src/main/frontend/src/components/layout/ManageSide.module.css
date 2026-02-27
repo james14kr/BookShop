@@ -1,32 +1,90 @@
-.container{
-  border: 1px solid black;
-  padding: 12px;
-  background-color: rgba(211, 211, 211, 0.09);
-}
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
 
-.container > div:not(:first-child){
-  margin-top: 20px;
-}
-
-.container h5{
-  margin-bottom: 8px;
-}
-
-.container li{
-  padding: 10px 0px;
+.container {
+  padding: 28px 0 28px;
+  height: 100%;
   display: flex;
-  gap: 4px;
-  padding-left: 8px;
-  font-size: 0.9rem;
+  flex-direction: column;
+  font-family: 'Noto Sans KR', sans-serif;
+  position: relative;
 }
 
-.icon{
-  color: #673de6;
-  font-size: 0.9rem;
+/* 상단 골드 액센트 바 */
+.accent {
+  width: 36px;
+  height: 3px;
+  background: linear-gradient(90deg, #c9a96e, #e8c98a);
+  border-radius: 2px;
+  margin: 0 20px 24px;
 }
 
-.container li:hover{
-  background-color: #6840e013;
-  color: #1e2d40;
+/* 사이드바 최상단 타이틀 */
+.sectionTitle {
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  padding: 0 20px;
+  margin-bottom: 20px;
+  font-family: 'DM Serif Display', serif;
+}
+
+/* 그룹 */
+.group {
+  margin-bottom: 24px;
+  padding: 0 10px;
+}
+
+.groupLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  color: #c9a96e;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0 10px;
+  margin-bottom: 6px;
+}
+
+/* 메뉴 리스트 */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 메뉴 아이템 */
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  margin: 2px 0;
   cursor: pointer;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.icon {
+  font-size: 0.85rem;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.label {
+  flex: 1;
+}
+
+/* 하단 텍스트 */
+.footer {
+  margin-top: auto;
+  padding: 0 20px;
+  font-size: 0.55rem;
+  letter-spacing: 0.28em;
+  color: rgba(255, 255, 255, 0.08);
+  font-family: 'DM Serif Display', serif;
 }

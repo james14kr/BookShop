@@ -1,84 +1,395 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
+
+/* ── 컨테이너 ── */
 .container {
-  width: 100%;
-  height: 100%;
-  padding: 40px 0;
+  padding: 44px 52px;
+  min-height: 80vh;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
-.container h2 {
-  margin-bottom: 20px;
-  font-size: 26px;
-  font-weight: bold;
-  text-align: center;
-  background-color: #f5f5f5;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-  font-size: 14px;
-}
-
-.table thead tr {
-  background-color: #f5f5f5;
-  border-top: 2px solid #333;
-  border-bottom: 1px solid #ddd;
-}
-
-.table thead td {
-  padding: 12px 8px;
-  font-weight: bold;
-}
-
-.table tbody tr {
-  border-bottom: 1px solid #eee;
-}
-
-.table tbody tr:hover {
-  background-color: #fafafa;
-}
-
-.table td {
-  padding: 12px 8px;
-  vertical-align: middle;
-}
-
-.table input[type="number"] {
-  width: 60px;
-  border: 1px solid lightgray;
-  border-radius: 3px;
-  padding: 5px;
-  text-align: center;
-}
-
-.table input[type="checkbox"] {
-  transform: scale(1.1);
-}
-
-.table tfoot {
-  background-color: #f9f9f9;
-  font-weight: bold;
-}
-
-.table tbody tr:last-child {
-  background-color: #f9f9f9;
-  font-weight: bold;
-}
-
-.btnBox {
-  margin-top: 30px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.bookInfo{
+/* ── 페이지 헤더 ── */
+.pageHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
-.bookImg{
-  width: 50px;
-  height: 70px;
+.pageTitleGroup {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.pageTitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.9rem;
+  color: #1a1a2e;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.itemCount {
+  font-size: 0.8rem;
+  color: #bbb;
+  letter-spacing: 0.04em;
+}
+
+/* ── 전체선택 ── */
+.checkAllLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #888;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+/* ── 커스텀 체크박스 ── */
+.checkInput {
+  display: none;
+}
+
+.checkMark {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #ddd;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+  background: #fff;
+  position: relative;
+}
+
+.checkInput:checked + .checkMark {
+  background: #1a1a2e;
+  border-color: #1a1a2e;
+}
+
+.checkInput:checked + .checkMark::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  border: 2px solid #c9a96e;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translate(-1px, -1px);
+  position: absolute;
+}
+
+/* ── 빈 장바구니 ── */
+.emptyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+  gap: 16px;
+}
+
+.emptyIcon {
+  font-size: 3.5rem;
+  opacity: 0.35;
+}
+
+.emptyText {
+  font-size: 0.95rem;
+  color: #bbb;
+  letter-spacing: 0.02em;
+}
+
+.shopBtn {
+  margin-top: 8px;
+  background: none;
+  border: 1.5px solid #1a1a2e;
+  color: #1a1a2e;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.shopBtn:hover {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+/* ── 카드 리스트 ── */
+.cartList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+/* ── 카트 카드 ── */
+.cartCard {
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+  animation: fadeUp 0.4s ease both;
+}
+
+.cartCard:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+}
+
+.cartCardChecked {
+  border-color: rgba(201, 169, 110, 0.35);
+  background: #fffdf9;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 체크박스 영역 ── */
+.cardCheck {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ── 도서 썸네일 ── */
+.bookThumb {
+  width: 58px;
+  height: 78px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #e8e0d4, #d5c9bb);
+}
+
+.bookImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── 도서 정보 ── */
+.bookInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.bookTitle {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bookDate {
+  font-size: 0.73rem;
+  color: #ccc;
+  letter-spacing: 0.02em;
+}
+
+/* ── 가격 영역 공통 ── */
+.bookPrice,
+.subtotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  min-width: 90px;
+}
+
+.priceLabel {
+  font-size: 0.65rem;
+  color: #ccc;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.priceValue {
+  font-size: 0.88rem;
+  color: #888;
+  letter-spacing: 0.01em;
+}
+
+.subtotalValue {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: #1a1a2e;
+}
+
+/* ── 수량 조절 ── */
+.qtyControl {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.qtyBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #fafaf9;
+  font-size: 1.1rem;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.qtyBtn:hover {
+  background: #f0ede8;
+  color: #1a1a2e;
+}
+
+.qtyValue {
+  min-width: 36px;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  background: #fff;
+  padding: 0 4px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-right: 1.5px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ── 삭제 버튼 ── */
+.deleteBtn {
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  background: transparent;
+  font-size: 0.65rem;
+  color: #ccc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.deleteBtn:hover {
+  border-color: #e00550;
+  color: #e00550;
+  background: #fff0f4;
+}
+
+/* ── 요약 패널 ── */
+.summaryPanel {
+  background: #1a1a2e;
+  border-radius: 16px;
+  padding: 28px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.summaryLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summaryLabelText {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.summaryAmount {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  color: #e8c98a;
+  letter-spacing: 0.01em;
+}
+
+.summaryUnit {
+  font-size: 1.1rem;
+  margin-left: 2px;
+}
+
+.summaryActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ── 보조 버튼 ── */
+.secondaryBtn {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.secondaryBtn:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+/* ── 주요 버튼 ── */
+.primaryBtn {
+  background: linear-gradient(135deg, #c9a96e, #e8c98a);
+  border: none;
+  color: #1a1a2e;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  font-family: inherit;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  opacity: 0.88;
+  transform: scale(0.98);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
 }

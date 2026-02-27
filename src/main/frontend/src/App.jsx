@@ -11,6 +11,7 @@ import { useState } from 'react'
 import BookDetail from './pages/book/BookDetail'
 import Cart from './pages/cart/Cart'
 import MyPageLayout from './components/layout/MyPageLayout'
+import CheckBoxTest from './study/CheckBoxTest'
 
 function App() {
 
@@ -30,7 +31,10 @@ function App() {
         <Route path='/' element = {<BasicLayout setLoginInfo ={setLoginInfo}/>}>
 
           {/* WebStorage 학습용 컴포넌트 */}
-          <Route path='storage' element = {<WebStorage/>}/>
+          <Route path='storage' element = {<WebStorage/>}/>\
+
+          {/* checkBox controll 학습용 컴포넌트 */}
+          <Route path='chk' element = {<CheckBoxTest/>}/>
 
           {/* 도서 목록 페이지 URL : localhost:5173 */}
           <Route path='' element = {<BookList/>}/>

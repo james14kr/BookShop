@@ -1,27 +1,116 @@
-.container{
-  padding: 12px;
-  background-color: rgba(211, 211, 211, 0.09);
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Pretendard:wght@300;400;500;600&display=swap');
+
+.container {
+  padding: 36px 0;
+  background: #1a1a2e;
   height: 100%;
-}
-
-.container > div:not(:first-child){
-  margin-top: 20px;
-}
-
-.container h5{
-  margin-bottom: 8px;
-}
-
-.container li{
-  padding: 10px 0px;
   display: flex;
-  gap: 4px;
-  padding-left: 8px;
-  font-size: 0.9rem;
+  flex-direction: column;
+  position: relative;
 }
 
-.container li:hover{
-  background-color: #6840e013;
-  color: #1e2d40;
+/* 상단 장식선 */
+.container::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #c9a96e, #e8c98a);
+  margin: 0 20px 28px 20px;
+  border-radius: 2px;
+}
+
+.container > div {
+  padding: 0 20px;
+}
+
+.container > div:not(:first-child) {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* 카테고리 제목 */
+.container h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c9a96e;
+  margin-bottom: 14px;
+  padding-left: 2px;
+}
+
+/* 메뉴 목록 */
+.container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.container li {
+  padding: 0;
+  display: block;
+}
+
+.container li p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
+  border-radius: 8px;
+  margin: 2px 0;
+  transition: all 0.22s ease;
+  position: relative;
+}
+
+/* 호버 전 아이콘 점 */
+.container li p::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  transition: all 0.22s ease;
+}
+
+.container li p:hover {
+  background: rgba(201, 169, 110, 0.1);
+  color: #e8c98a;
+  padding-left: 18px;
+}
+
+.container li p:hover::before {
+  background: #c9a96e;
+  box-shadow: 0 0 6px rgba(201, 169, 110, 0.5);
+}
+
+/* 활성 메뉴 */
+.container li.active p {
+  background: rgba(201, 169, 110, 0.12);
+  color: #e8c98a;
+  font-weight: 500;
+}
+
+.container li.active p::before {
+  background: #c9a96e;
+}
+
+/* 하단 버전 표시 */
+.container::after {
+  content: 'MY PAGE';
+  position: absolute;
+  bottom: 28px;
+  left: 20px;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.12);
+  font-family: 'DM Serif Display', serif;
 }

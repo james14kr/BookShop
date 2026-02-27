@@ -1,50 +1,270 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
+
+/* ── 전체 컨테이너 ── */
 .container {
-  min-height: 40vh;           /* 화면 중앙 정렬용 */
+  min-height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
+  background: #f0ede8;
+  font-family: 'Noto Sans KR', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── 배경 장식 오브 ── */
+.bgOrb1 {
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 169, 110, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bgOrb2 {
+  position: absolute;
+  bottom: -100px;
+  left: -60px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26, 26, 46, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── 카드 ── */
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.08);
+  padding: 48px 44px 44px;
+  animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── 흔들기 애니메이션 (로그인 실패) ── */
+.shake {
+  animation: shake 0.45s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-8px); }
+  30%       { transform: translateX(7px); }
+  45%       { transform: translateX(-6px); }
+  60%       { transform: translateX(5px); }
+  75%       { transform: translateX(-3px); }
+  90%       { transform: translateX(2px); }
+}
+
+/* ── 카드 헤더 ── */
+.cardHeader {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.logoMark {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.25rem;
+  color: #1a1a2e;
+  letter-spacing: 0.06em;
+  margin-bottom: 24px;
+}
+
+.logoDot {
+  color: #c9a96e;
+}
+
+/* 카드 헤더 위 골드 라인 */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 3px;
+  background: linear-gradient(90deg, #c9a96e, #e8c98a);
+  border-radius: 0 0 4px 4px;
+}
+
+.title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.subtitle {
+  font-size: 0.78rem;
+  color: #bbb;
+  letter-spacing: 0.03em;
+}
+
+/* ── 폼 ── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── 필드 그룹 ── */
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 0.72rem;
+  color: #aaa;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ── 인풋 래퍼 ── */
+.inputWrap {
+  position: relative;
+  display: flex;
   align-items: center;
 }
 
-/* 로그인 박스 */
-.loginForm {
-  width: 380px;
-  padding: 40px 30px;
-  background-color: #ffffff;
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  font-size: 0.85rem;
+  opacity: 0.35;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.input {
+  width: 100%;
+  padding: 13px 16px 13px 40px;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-/* 제목 */
-.loginForm h2 {
-  text-align: center;
-  margin-bottom: 25px;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* 입력칸 간격 */
-.loginForm > div {
-  margin-bottom: 15px;
-}
-
-/* input 기본 스타일 */
-.loginForm input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* input focus 효과 */
-.loginForm input:focus {
+  font-size: 0.88rem;
+  color: #1a1a2e;
+  background: #fafaf9;
+  font-family: inherit;
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s;
 }
 
-/* 버튼 영역 */
-.loginForm button {
+.input::placeholder {
+  color: #ccc;
+  font-size: 0.83rem;
+}
+
+.input:focus {
+  border-color: #c9a96e;
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.12);
+  background: #fff;
+}
+
+/* ── 로그인 버튼 ── */
+.loginBtn {
   width: 100%;
-  margin-top: 10px;
+  padding: 15px;
+  margin-top: 4px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4e 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  position: relative;
+  overflow: hidden;
+}
+
+.loginBtn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #c9a96e, #e8c98a);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.loginBtn:hover:not(:disabled)::after {
+  opacity: 1;
+}
+
+.loginBtn:hover:not(:disabled) {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.loginBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.loginBtn:disabled {
+  cursor: not-allowed;
+}
+
+.loginBtnLoading {
+  background: linear-gradient(135deg, #2a2a4e, #3a3a6e);
+}
+
+/* ── 로딩 스피너 ── */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #e8c98a;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── 회원가입 링크 ── */
+.joinPrompt {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #bbb;
+  letter-spacing: 0.02em;
+  margin-top: 4px;
+}
+
+.joinLink {
+  color: #c9a96e;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 4px;
+  transition: color 0.18s;
+}
+
+.joinLink:hover {
+  color: #1a1a2e;
 }

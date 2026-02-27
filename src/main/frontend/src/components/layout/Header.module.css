@@ -1,34 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
 
-.top_menu{
-  display: flex;
-  justify-content: end;
-}
-
-.top_menu > ul{
-  display: flex;
-  gap: 10px;
-  margin:8px 0px;
-}
-
-
-
-.banner_div{
-  position: relative;
-}
-
-.banner_img{
+/* ── 루트 ── */
+.root {
   width: 100%;
-  height: 150px;
-  object-fit: cover;
-  object-position: center 80%;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
-.banner_title{
+/* ─────────────────────────────────────
+   유틸 바 (상단 네비게이션)
+───────────────────────────────────── */
+.utilBar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  transition: box-shadow 0.3s ease;
+}
+
+.utilBarScrolled {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+}
+
+.utilInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+}
+
+/* ── 로고 ── */
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.45rem;
+  color: #1a1a2e;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s;
+}
+
+.logo:hover {
+  opacity: 0.75;
+}
+
+.logoDot {
+  color: #c9a96e;
+}
+
+/* ── 우측 유틸 네비 ── */
+.utilNav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 로그인한 사용자 인사말 */
+.greeting {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  color: #999;
+  letter-spacing: 0.02em;
+  padding: 0 10px;
+}
+
+.greetingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c9a96e;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(201, 169, 110, 0.5);
+}
+
+/* 텍스트 링크 스타일 */
+.utilLink {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  color: #555;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.03em;
+  border-radius: 6px;
+  transition: color 0.18s, background 0.18s;
+}
+
+.utilLink:hover {
+  color: #1a1a2e;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* 구분선 */
+.divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.12);
+  margin: 0 4px;
+}
+
+/* Join 버튼 */
+.joinBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 18px;
+  font-size: 0.82rem;
+  color: #fff;
+  background: #1a1a2e;
+  text-decoration: none;
+  border-radius: 7px;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  transition: background 0.18s, transform 0.15s;
+}
+
+.joinBtn:hover {
+  background: #2a2a4e;
+  transform: translateY(-1px);
+}
+
+/* 로그아웃 버튼 */
+.logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  font-size: 0.82rem;
+  color: #888;
+  background: none;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  transition: all 0.18s;
+}
+
+.logoutBtn:hover {
+  border-color: #1a1a2e;
+  color: #1a1a2e;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* ─────────────────────────────────────
+   배너 영역
+───────────────────────────────────── */
+.banner {
+  position: relative;
+  width: 100%;
+  height: 250PX;
+  overflow: hidden;
+}
+
+.bannerImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: scale(1.04);
+  transition: transform 6s ease;
+}
+
+.banner:hover .bannerImg {
+  transform: scale(1);
+}
+
+/* 그라디언트 오버레이 */
+.bannerOverlay {
   position: absolute;
-  top: 30px;
-  left: 120px;
-  color: white;
-  font-size: 3rem;
-  letter-spacing: 10px;
-  font-family: 'YeogiOttaeJalnan';
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 46, 0.72) 0%,
+    rgba(26, 26, 46, 0.38) 55%,
+    rgba(26, 26, 46, 0.18) 100%
+  );
+}
+
+/* 배너 텍스트 블록 */
+.bannerContent {
+  position: absolute;
+  bottom: 48px;
+  left: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bannerEyebrow {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.bannerTitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3.6rem;
+  color: #fff;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* 골드 액센트 바 */
+.bannerAccent {
+  width: 52px;
+  height: 3px;
+  background: linear-gradient(90deg, #c9a96e, #e8c98a);
+  border-radius: 2px;
+  margin-top: 2px;
 }
