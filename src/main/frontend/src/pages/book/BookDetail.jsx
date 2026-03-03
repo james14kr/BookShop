@@ -55,9 +55,9 @@ const BookDetail = () => {
         setCartLoading(false)
         const goToCart = window.confirm("장바구니에 담았습니다. 장바구니 페이지로 갈까요?")
         if (goToCart) nav('/cart')
-      } else {
-        alert("수량은 최소 1개 입니다.")
-      }
+        } else {
+          alert("수량은 최소 1개 입니다.")
+        }
     } catch (e) {
       console.error("카트 등록 에러", e)
       setCartLoading(false)
