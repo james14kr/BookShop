@@ -1,39 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<!-- 해당 파일에 구매 관련 모든 쿼리문을 작성 -->
 <!-- namespace에는 xml파일과 연결할 Mapper interface 파일명을 패키지를 포함하여 적어주세요 -->
-<mapper namespace="mapper">
-	
+<mapper namespace="com.green.book_shop_t.buy.mapper.BuyMapper">
+
+    <!--
+        ── BuyDetailDTO resultMap ──
+        BUY_DETAIL 테이블 컬럼 + JOIN으로 가져오는 컬럼(bookTitle, bookPrice, uploadFileName)을 매핑
+        id="buyDetail" : buy resultMap의 <collection>에서 이 id로 참조함
+    -->
+    <resultMap id="buyDetail" type="com.green.book_shop_t.buy.dto.BuyDetailDTO">
+        <id     column="BUY_DETAIL_NUM"   property="buyDetailNum"/>
+        <result column="BOOK_NUM"         property="bookNum"/>
+        <result column="BUY_CNT"          property="buyCnt"/>
+        <result column="BUY_NUM"          property="buyNum"/>
+        <!-- SHOP_BOOK JOIN 컬럼 -->
+        <result column="BOOK_TITLE"       property="bookTitle"/>
+        <result column="BOOK_PRICE"       property="bookPrice"/>
+        <!-- BOOK_IMG JOIN 컬럼 -->
+        <result column="UPLOAD_FILE_NAME" property="uploadFileName"/>
+    </resultMap>
+
+    <!--
+        ── BuyDTO resultMap ──
+        SHOP_BUY 테이블 컬럼을 매핑하고,
+        <collection>으로 1:N 관계인 BUY_DETAIL 목록을 List<BuyDetailDTO>에 자동으로 담음
+
+        <collection>
+          - property   : BuyDTO 안의 List 필드명 (buyDetailList)
+          - resultMap  : 각 BUY_DETAIL 행을 매핑할 resultMap id (위의 buyDetail)
+          - 동작 원리  : SELECT 결과에서 BUY_NUM이 같은 행들을 하나의 BuyDTO로 묶고,
+                         그 안의 BUY_DETAIL 컬럼들은 buyDetailList 에 BuyDetailDTO로 추가
+    -->
+    <resultMap id="buy" type="com.green.book_shop_t.buy.dto.BuyDTO">
+        <id     column="BUY_NUM"    property="buyNum"/>
+        <result column="BUY_PRICE"  property="buyPrice"/>
+        <result column="MEM_EMAIL"  property="memEmail"/>
+        <result column="BUY_DATE"   property="buyDate"/>
+        <!-- 1:N 관계 매핑: BUY_DETAIL 행들 → buyDetailList -->
+        <collection property="buyDetailList" resultMap="buyDetail"/>
+    </resultMap>
+
+    <!-- ==================== 구매 등록 쿼리 (SHOP_BUY) ==================== -->
+    <!--
+        SHOP_BUY 테이블에 구매 헤더 1건 INSERT
+        BUY_NUM  : AUTO_INCREMENT 이므로 제외
+        BUY_DATE : DEFAULT SYSDATE() 이므로 제외
+        INSERT 후 자동 생성된 BUY_NUM을 buyNum 필드에 돌려받음 (useGeneratedKeys)
+        → 이후 BUY_DETAIL INSERT 시 이 buyNum을 FK로 사용해야 하기 때문
+    -->
+    <insert id="insertBuy" useGeneratedKeys="true" keyProperty="buyNum">
+        INSERT INTO SHOP_BUY (
+            BUY_PRICE
+            , MEM_EMAIL
+        ) VALUES (
+            #{buyPrice}
+            , #{memEmail}
+        )
+    </insert>
+
+    <!-- ==================== 구매 상세 등록 쿼리 (BUY_DETAIL) ==================== -->
+    <!--
+        BUY_DETAIL 테이블에 도서 1종의 구매 상세 INSERT
+        BUY_DETAIL_NUM : AUTO_INCREMENT 이므로 제외
+        buyNum         : insertBuy 실행 후 BuyDTO.buyNum에 채워진 값을 사용
+    -->
+    <insert id="insertBuyDetail">
+        INSERT INTO BUY_DETAIL (
+            BOOK_NUM
+            , BUY_CNT
+            , BUY_NUM
+        ) VALUES (
+            #{bookNum}
+            , #{buyCnt}
+            , #{buyNum}
+        )
+    </insert>
+
+    <!-- ==================== 회원별 구매 목록 조회 쿼리 ==================== -->
+    <!--
+        특정 회원의 전체 구매 내역을 조회 (구매 헤더 + 도서 상세 한 번에)
+        - SHOP_BUY(B)      : 구매 헤더 (주문번호, 총금액, 날짜)
+        - BUY_DETAIL(D)    : 구매 상세 (도서번호, 수량)
+        - SHOP_BOOK(BK)    : 도서 제목, 단가 조회를 위해 INNER JOIN
+        - BOOK_IMG(I)      : 대표 이미지 조회를 위해 LEFT JOIN
+                             (이미지 없는 도서도 목록에 표시되도록 LEFT JOIN)
+        - IS_MAIN = 'Y'    : 대표 이미지 1장만 조인
+        - 구매 최신순 정렬
+        resultMap="buy"    : BUY_NUM이 같은 행들을 하나의 BuyDTO로 묶고
+                             BUY_DETAIL 행들은 buyDetailList에 자동 수집
+    -->
+    <select id="selectBuyList" resultMap="buy">
+        SELECT B.BUY_NUM
+               , B.BUY_PRICE
+               , B.MEM_EMAIL
+               , B.BUY_DATE
+               , D.BUY_DETAIL_NUM
+               , D.BOOK_NUM
+               , D.BUY_CNT
+               , BK.BOOK_TITLE
+               , BK.BOOK_PRICE
+               , I.UPLOAD_FILE_NAME
+        FROM SHOP_BUY B
+                 INNER JOIN BUY_DETAIL D
+                            ON B.BUY_NUM = D.BUY_NUM
+                 INNER JOIN SHOP_BOOK BK
+                            ON D.BOOK_NUM = BK.BOOK_NUM
+                 LEFT JOIN BOOK_IMG I
+                           ON BK.BOOK_NUM = I.BOOK_NUM
+                               AND I.IS_MAIN = 'Y'    -- 대표 이미지만 조인
+        WHERE B.MEM_EMAIL = #{memEmail}
+        ORDER BY B.BUY_DATE DESC
+    </select>
+
 </mapper>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
