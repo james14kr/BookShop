@@ -43,10 +43,39 @@
 1. 도서 목록 조회
 2. 도서 상세 조회
 
+<<---------------2026-02-24----------------->>
+1. 장바구니 목록 페이지 구현
+  1-1. Cart.jsx를 table 구조로 변경 (No, 체크박스, 도서정보, 가격, 수량, 구매가격, 등록일자, 삭제)
+  1-2. 로그인 체크 기능 추가 (비로그인 시 경고 후 로그인 페이지로 이동)
+  1-3. 수량 변경 함수 구현 (handleQuantityChange)
+  1-4. 전체 합계 계산 로직 추가 (reduce 사용)
+  1-5. MyPage 레이아웃 컴포넌트 추가
+      - MyPageLayout.jsx : 마이페이지 공통 레이아웃
+      - MyPageSide.jsx   : 마이페이지 사이드 메뉴
+      - MyPageForm.jsx   : 마이페이지 폼 영역
+
 <<---------------2026-02-25----------------->>
 1. 도서 장바구니 삭제
 2. 도서 장바구니 체크박스
 3. 도서 장바구니 총합
+
+<<---------------2026-02-27----------------->>
+1. 장바구니 체크박스 기능 완성
+  1-1. 개별 체크박스 선택/해제 기능 구현 (checked 배열로 상태 관리)
+  1-2. 전체선택/전체해제 체크박스 구현 (isAllChecked 파생 상태 활용)
+  1-3. 선택된 상품만의 합계 금액 실시간 계산 (filter + reduce)
+2. 장바구니 수량 변경 API 연동
+  - cartApi.js에 updateCartCount 함수 추가
+  - 수량 변경 시 서버 DB 업데이트 후 state만 교체 (전체 재조회 없이 성능 최적화)
+3. 장바구니 삭제 API 연동 완성
+  - cartApi.js에 deleteContent 함수 추가
+  - 삭제 후 cartList state와 checked 배열 동시 업데이트
+4. 체크박스 학습용 예제 컴포넌트 작성 (study/CheckBoxTest.jsx)
+5. 전체 페이지 디자인 변경 (CSS Module 대규모 업데이트)
+  - 공통 레이아웃 : Header, ManageSide, ManagerHeader, ManagerLayout, MyPageSide, MyPageLayout
+  - 도서 관련    : EachBook, BookDetail, BookForm
+  - 장바구니     : Cart
+  - 회원 관련    : Join, Login
 
 
 
