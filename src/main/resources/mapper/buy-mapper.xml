@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<!-- namespace에는 xml파일과 연결할 Mapper interface 파일명을 패키지를 포함하여 적어주세요 -->
+<mapper namespace="com.green.book_shop_t.buy.mapper.BuyMapper">
+
+    <!--구매 등록(SHOP_BUY)-->
+    <!--useGeneratedKeys="true" -> auto_increment된 key를 insert시 사용하겠다는 의미-->
+    <!--keyProperty="buyNum" -> 이 쿼리의 빈값을 채우기 위해 가져온 객체(buyDTO)의 buyNum 변수에 생성된 key를 넣어주겠다는 의미-->
+    <insert id="insertBuy" useGeneratedKeys="true" keyProperty="buyNum">
+        INSERT INTO SHOP_BUY(
+            BUY_PRICE
+            ,MEM_EMAIL
+        )VALUES(
+            #{buyPrice}
+            ,#{memEmail}
+        )
+    </insert>
+
+    <!--구매 등록(BUY_DETAIL)-->
+    <insert id="insertBuyDetail">
+        INSERT INTO BUY_DETAIL(
+            BOOK_NUM
+            ,BUY_CNT
+            ,BUY_NUM
+        )VALUES
+        <foreach collection="detailList" item="detail" separator=",">
+            (#{detail.bookNum},#{detail.buyCnt},#{buyNum})
+        </foreach>
+    </insert>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
