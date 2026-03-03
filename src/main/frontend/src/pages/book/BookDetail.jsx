@@ -3,6 +3,7 @@ import styles from './BookDetail.module.css'
 import { selectBookDetail } from '../../api/bookApi.js'
 import { useNavigate, useParams } from 'react-router-dom'
 import { insertCart } from '../../api/cartApi.js'
+import { insertBuy } from '../../api/buyApi.js'
 
 const BookDetail = () => {
   const nav = useNavigate()
@@ -73,6 +74,25 @@ const BookDetail = () => {
         <span className={styles.spinner} />
       </div>
     )
+  }
+
+  const regBuy = () => {
+
+    const memEmail = JSON.parse(sessionStorage.getItem("loginInfo")).memEmail
+
+    const data = {
+      buyPrice : totalPrice,
+      memEmail :  memEmail,
+      detailList : [
+        {
+          bookNum : bookDetailData.bookNum,
+          buyCnt : count
+        }
+      ]
+    }
+
+    insertBuy(data)
+
   }
 
   return (
@@ -181,7 +201,7 @@ const BookDetail = () => {
             </button>
             <button
               className={styles.buyBtn}
-              onClick={() => alert('구매 기능 구현 필요')}
+              onClick={regBuy}
             >
               바로 구매 →
             </button>
