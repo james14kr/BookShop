@@ -15,7 +15,7 @@
         SELECT COUNT(*)
         FROM SHOP_BUY
         WHERE YEAR(BUY_DATE) = YEAR(NOW())
-            AND MONTH(BUY_DATE) = YEAR(NOW())
+            AND MONTH(BUY_DATE) = MONTH(NOW())
     </select>
 
     <select id="selectTodaySales" resultType="long">
