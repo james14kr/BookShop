@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Button from '../../components/common/Button'
 import { selectCartList, updateCartCount, deleteContent } from '../../api/cartApi'
 import styles from './Cart.module.css'
 import dayjs from 'dayjs'
+import { insertBuy } from '../../api/buyApi'
 
 // ═══════════════════════════════════════════════════════════
 //  Cart 컴포넌트
@@ -133,11 +133,56 @@ const Cart = () => {
     }
   }
 
-  // ─────────────────────────────────────────────────────────
-  //  렌더링
-  //  - 장바구니가 비어있으면 → 빈 장바구니 안내 UI 표시
-  //  - 상품이 있으면 → 카드 목록 + 요약 패널 표시
-  // ─────────────────────────────────────────────────────────
+  const regBuys = async () => {
+    //로그인 여부 확인
+    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"))
+
+
+    if(loginInfo == null){
+      alert("로그인 필수")
+      nav('/login')
+      return;
+    }
+    //구매 도서 선택 여부 확인
+    if(checked.length === 0){
+      alert('구매할 도서를 선택하세요')
+      return;
+    }
+
+    //아래 data 변수의 detaiList 키에 들어갈 데이터 생서
+    const detailList = [];
+    
+    //체크한 도서수만큼 반복
+    for(let i= 0; i < checked.length; i++){
+      const detailData = {
+        bookNum : cartList.filter(e => e.cartNum === checked[i]).map(e => e.bookNum)[0],
+        buyCnt : cartList.filter(e => e.cartNum === checked[i]).map(e => e.cartCnt)[0]
+      };
+
+      detailList.push(detailData);
+    }
+
+    //자바로 가져갈 데이터
+    const data = {
+      buyPrice : totalPrice,
+      memEmail : loginInfo.memEmail,
+      detailList : detailList
+    }
+
+    //SHOP_BUY, BUY_DETAIL 테이블에 데이터 INSERT
+    await insertBuy(data);
+
+    //장바구니에서 구매한 도서는 삭제
+    //Promise.all : checked가 여러개 일때 기다리지 않고 한 번에 삭제
+    await Promise.all(checked.map(cartNum => deleteContent(cartNum)));
+
+    setCartList(prev => prev.filter(item => !checked.includes(item.cartNum)))
+    setChecked([]);
+
+    alert("구매가 완료 되었습니다.");
+
+  }
+
   return (
     <div className={styles.container}>
 
@@ -215,7 +260,7 @@ const Cart = () => {
               {/* 구매하기: 선택된 상품이 없으면 비활성화 */}
               <button
                 className={styles.primaryBtn}
-                onClick={() => alert('구매 기능 구현 필요')}
+                onClick={regBuys}
                 disabled={checked.length === 0}
               >
                 구매하기 ({checked.length})
@@ -243,17 +288,12 @@ const Cart = () => {
 // ═══════════════════════════════════════════════════════════
 function CartCard({ item, index, checked, onCheck, onQuantityChange, onDelete }) {
 
-  // 카드 호버 상태 (마우스 올렸을 때 CSS 스타일 변경용)
-  const [hovered, setHovered] = useState(false)
-
   return (
     <div
       // checked 상태에 따라 골드 테두리 클래스 추가
       className={`${styles.cartCard} ${checked ? styles.cartCardChecked : ''}`}
       // index × 0.07초로 카드마다 순차적 등장 애니메이션 적용
       style={{ animationDelay: `${index * 0.07}s` }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
 
       {/* ── 체크박스: 개별 상품 선택/해제 ── */}

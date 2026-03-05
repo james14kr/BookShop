@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- 해당 파일에 모든 쿼리문을 작성 -->
-<!-- namespace에는 xml파일과 연결할 Mapper interface 파일명을 패키지를 포함하여 적어주세요 -->
 <mapper namespace="com.green.book_shop_t.book.mapper.CartMapper">
+
+    <!-- SHOP_CART + JOIN된 테이블의 데이터를 CartDTO에 매핑 -->
     <resultMap id="cart" type="com.green.book_shop_t.book.dto.CartDTO">
         <id column="CART_NUM" property="cartNum"/>
         <result column="BOOK_NUM" property="bookNum"/>
-        <result column="BOOK_TITLE" property="bookTitle"/>
-        <result column="BOOK_PRICE" property="bookPrice"/>
+        <result column="BOOK_TITLE" property="bookTitle"/>      <!-- SHOP_BOOK에서 JOIN -->
+        <result column="BOOK_PRICE" property="bookPrice"/>      <!-- SHOP_BOOK에서 JOIN -->
         <result column="CART_CNT" property="cartCnt"/>
         <result column="MEM_EMAIL" property="memEmail"/>
         <result column="CART_DATE" property="cartDate"/>
-        <result column="UPLOAD_FILE_NAME" property="uploadFileName"></result>
+        <result column="UPLOAD_FILE_NAME" property="uploadFileName"/>  <!-- BOOK_IMG에서 JOIN -->
     </resultMap>
 
-    <!--장바구니 등록 쿼리-->
+    <!--
+        [장바구니 추가 쿼리]
+        ON DUPLICATE KEY UPDATE 란?
+        - SHOP_CART 테이블에 (BOOK_NUM, MEM_EMAIL) 복합 UNIQUE KEY 설정 전제
+        - INSERT 시도 시 해당 (bookNum, memEmail) 조합이 이미 존재하면:
+          → INSERT 실패 대신 UPDATE 실행 (CART_CNT = CART_CNT + 추가수량)
+        - 즉, 같은 책을 다시 담으면 수량만 증가
+        예) 이미 책A 2개 → 책A 3개 추가 → CART_CNT = 2 + 3 = 5
+    -->
     <insert id="insertCart">
         INSERT INTO SHOP_CART(
             BOOK_NUM
@@ -29,14 +37,23 @@
             CART_CNT = CART_CNT + #{cartCnt}
     </insert>
 
-    <!--장바구니 조회 쿼리-->
+    <!--
+        [장바구니 목록 조회 쿼리]
+        3개 테이블 JOIN:
+        - SHOP_CART(C)  : 장바구니 정보 (수량, 날짜 등)
+        - SHOP_BOOK(B)  : 도서 정보 (제목, 가격) → INNER JOIN (책 정보 반드시 필요)
+        - BOOK_IMG(I)   : 대표 이미지 → LEFT JOIN + IS_MAIN='Y' 조건
+                          (이미지 없어도 장바구니 상품은 표시되어야 하므로 LEFT JOIN)
+        ORDER BY CART_DATE DESC : 최근 담은 순서로 정렬
+    -->
     <select id="selectCartList" resultMap="cart">
         SELECT C.CART_NUM,
             B.BOOK_TITLE,
             B.BOOK_PRICE,
             C.CART_CNT,
             C.CART_DATE,
-            I.UPLOAD_FILE_NAME
+            I.UPLOAD_FILE_NAME,
+            C.BOOK_NUM
         FROM SHOP_CART C
         INNER JOIN SHOP_BOOK B
             ON C.BOOK_NUM = B.BOOK_NUM
@@ -47,13 +64,18 @@
         ORDER BY C.CART_DATE DESC
     </select>
 
-    <!--장바구니 상품 삭제 쿼리-->
+    <!-- [장바구니 단건 삭제 쿼리] cartNum(PK)으로 해당 항목 삭제 -->
     <delete id="deleteContent">
         DELETE FROM SHOP_CART
         WHERE CART_NUM = #{cartNum}
     </delete>
 
-    <!--장바구니 수량 수정 쿼리-->
+    <!--
+        [장바구니 수량 수정 쿼리]
+        SET CART_CNT = #{cartCnt} : 새 수량으로 완전히 교체 (증분이 아닌 절대값 설정)
+        WHERE BOOK_NUM = #{bookNum} AND MEM_EMAIL = #{memEmail}
+        → cartNum 대신 bookNum+memEmail로 조건 설정
+    -->
     <update id="updateCart">
         UPDATE SHOP_CART
         SET CART_CNT = #{cartCnt}

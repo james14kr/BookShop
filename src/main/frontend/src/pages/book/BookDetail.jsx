@@ -55,7 +55,7 @@ const BookDetail = () => {
         await insertCart(cartData)
         setCartLoading(false)
         const goToCart = window.confirm("장바구니에 담았습니다. 장바구니 페이지로 갈까요?")
-        if (goToCart) nav('/cart')
+        if (goToCart) nav('/user/cart')
       } else {
         alert("수량은 최소 1개 입니다.")
       }
@@ -77,7 +77,7 @@ const BookDetail = () => {
   }
 
   //구매 버튼 클릭 시 실행 함수
-  const regBuy = () => {
+  const regBuy = async () => {
 
     const memEmail = JSON.parse(sessionStorage.getItem("loginInfo")).memEmail;
 
@@ -93,7 +93,12 @@ const BookDetail = () => {
       ]
     }
 
-    insertBuy(data);
+    await insertBuy(data);
+
+    const result = confirm('구매완료 \n 장바구니 페이지로 이동하시겠습니까?');
+    if(result){
+      nav('/user/cart');
+    }
 
   }
 

@@ -54,7 +54,8 @@
   display: block;
 }
 
-.container li p {
+/* 기본 링크 스타일 (비활성 포함 모든 NavLink) */
+.container li a {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -63,15 +64,15 @@
   font-weight: 400;
   letter-spacing: 0.01em;
   color: rgba(255, 255, 255, 0.55);
-  cursor: pointer;
+  text-decoration: none;
   border-radius: 8px;
   margin: 2px 0;
   transition: all 0.22s ease;
   position: relative;
 }
 
-/* 호버 전 아이콘 점 */
-.container li p::before {
+/* 아이콘 점 */
+.container li a::before {
   content: '';
   width: 5px;
   height: 5px;
@@ -81,25 +82,26 @@
   transition: all 0.22s ease;
 }
 
-.container li p:hover {
+/* 호버 */
+.container li a:hover {
   background: rgba(201, 169, 110, 0.1);
   color: #e8c98a;
   padding-left: 18px;
 }
 
-.container li p:hover::before {
+.container li a:hover::before {
   background: #c9a96e;
   box-shadow: 0 0 6px rgba(201, 169, 110, 0.5);
 }
 
-/* 활성 메뉴 */
-.container li.active p {
+/* 활성 링크 (NavLink isActive = true) */
+.container li a.active {
   background: rgba(201, 169, 110, 0.12);
   color: #e8c98a;
   font-weight: 500;
 }
 
-.container li.active p::before {
+.container li a.active::before {
   background: #c9a96e;
 }
 

@@ -1,82 +1,512 @@
-<<2026-02-12 학습 내용>>
-1. spring 작성
-	1). 로그인 쿼리 작성
-		member-mapper.xml에 SELECT 로그인 쿼리 작성
-	2). 로그인 쿼리 실행 메서드 작성
-		MemberMapper.java에 로그인 쿼리 실행 메서드 작성
-	3). 로그인 여부 확인 기능 메서드 작성
-		MemberService.java에 로그인 여부 확인 기능 메서드 작성
-	4). 로그인 api 작성
-		MemberController.java에 로그인 api 작성
-
-2. react 작성
-	1). Login.jsx에 로그인 폼 작성
-	2). 입력할 정보를 저장할 state 변수 작성
-	3). 입력할 때마다 실행하는 함수 작성
-	4). 로그인 버튼 클릭 시 실행하는 함수 작성
-		- api 패키지 안에 loginApi 작성
+================================================================================
+  Book Shop 프로젝트 학습내용 정리
+  작성일 : 2026-03-04
+  프로젝트 : Spring Boot 3.5.10 + React + MyBatis + MariaDB
+================================================================================
 
 
-<<---------------2026-02-19----------------->>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. 프로젝트 전체 구조 (3계층 아키텍처)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-상품등록 기능에 이미지 추가
-1. 도서등록화면에 이미지를 선택할 수 있는 태그를 추가
-2. 입력한 도서정보를 저장(이미지 포함)
-  2-1. 데이터베이스에 이미지 이름도 저장(파일 자체가 아니라, 파일명을 저장)
-    1) react에서 input 태그 추가(type = "file")
-    2) input 태그에서 선택한 파일을 state 변수에 저장
-    3) 도서정보(문자,숫자) + 파일정보 모두를 저장할 수 있는 FormData() 객체 생성 및 내용 저장
-    4) FormData에 저장된 모든 정보를 axios를 이용해 spring에 전달
-       이때, 파일 데이터도 전송할 수 있도록 axios의 설정 내용을 추가해야함
+[React 프론트엔드]
+    │  HTTP 요청 (JSON/FormData)
+    ▼
+[Spring Boot 백엔드]
+    Controller → Service → Mapper → DB(MariaDB)
+    Controller ← Service ← Mapper ← DB(MariaDB)
+    │  JSON 응답
+    ▼
+[React 프론트엔드]
 
-    -spring 파트-
-    1) Controller에서 MultipartFile 객체를 이용해 전달되는 파일 데이터를 받음
-    2) application.properties 파일에 업로드할 파일 위치를 지정
-    3) 전달받은 파일을 업로드하기 위해 파일명을 생성
-    4) 파일 업로드 코드 작성 
-
-<<---------------2026-02-20----------------->>
-  2-2. 서버(spring)에서 선택한 이미지 파일도 저장 -> 첨부기능(업로드 기능) 
+ * Controller : HTTP 요청 수신 → Service 호출 → 응답 반환
+ * Service    : 비즈니스 로직 처리 (트랜잭션 관리)
+ * Mapper     : DB 쿼리 실행 (MyBatis XML 쿼리와 연결)
+ * DTO        : 계층 간 데이터 전달 객체
 
 
-<<---------------2026-02-23----------------->>
-1. 도서 목록 조회
-2. 도서 상세 조회
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. Spring Boot 핵심 어노테이션 정리
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-<<---------------2026-02-24----------------->>
-1. 장바구니 목록 페이지 구현
-  1-1. Cart.jsx를 table 구조로 변경 (No, 체크박스, 도서정보, 가격, 수량, 구매가격, 등록일자, 삭제)
-  1-2. 로그인 체크 기능 추가 (비로그인 시 경고 후 로그인 페이지로 이동)
-  1-3. 수량 변경 함수 구현 (handleQuantityChange)
-  1-4. 전체 합계 계산 로직 추가 (reduce 사용)
-  1-5. MyPage 레이아웃 컴포넌트 추가
-      - MyPageLayout.jsx : 마이페이지 공통 레이아웃
-      - MyPageSide.jsx   : 마이페이지 사이드 메뉴
-      - MyPageForm.jsx   : 마이페이지 폼 영역
+[클래스 레벨 어노테이션]
+  @SpringBootApplication   : 메인 클래스. @Configuration + @EnableAutoConfiguration + @ComponentScan 합친 것
+  @RestController          : @Controller + @ResponseBody. 모든 메서드 반환값을 JSON으로 자동 변환
+  @Service                 : 서비스 계층 Bean 등록. 비즈니스 로직 담당
+  @Mapper                  : MyBatis Mapper 인터페이스 등록. XML 쿼리와 자동 연결
+  @Configuration           : Spring 설정 클래스 등록
+  @Component               : 일반 Bean 등록 (UploadUtil 등 유틸리티 클래스)
 
-<<---------------2026-02-25----------------->>
-1. 도서 장바구니 삭제
-2. 도서 장바구니 체크박스
-3. 도서 장바구니 총합
+[메서드/필드 레벨 어노테이션]
+  @RequiredArgsConstructor : final 필드에 대한 생성자 자동 생성 (의존성 주입)
+  @Slf4j                   : log.error(), log.info() 등 로그 기능 활성화
+  @Value("${...}")         : application.properties 값을 필드에 주입
+  @Transactional           : 트랜잭션 처리 (모든 쿼리 성공 시 COMMIT, 실패 시 ROLLBACK)
 
-<<---------------2026-02-27----------------->>
-1. 장바구니 체크박스 기능 완성
-  1-1. 개별 체크박스 선택/해제 기능 구현 (checked 배열로 상태 관리)
-  1-2. 전체선택/전체해제 체크박스 구현 (isAllChecked 파생 상태 활용)
-  1-3. 선택된 상품만의 합계 금액 실시간 계산 (filter + reduce)
-2. 장바구니 수량 변경 API 연동
-  - cartApi.js에 updateCartCount 함수 추가
-  - 수량 변경 시 서버 DB 업데이트 후 state만 교체 (전체 재조회 없이 성능 최적화)
-3. 장바구니 삭제 API 연동 완성
-  - cartApi.js에 deleteContent 함수 추가
-  - 삭제 후 cartList state와 checked 배열 동시 업데이트
-4. 체크박스 학습용 예제 컴포넌트 작성 (study/CheckBoxTest.jsx)
-5. 전체 페이지 디자인 변경 (CSS Module 대규모 업데이트)
-  - 공통 레이아웃 : Header, ManageSide, ManagerHeader, ManagerLayout, MyPageSide, MyPageLayout
-  - 도서 관련    : EachBook, BookDetail, BookForm
-  - 장바구니     : Cart
-  - 회원 관련    : Join, Login
+[요청 매핑 어노테이션]
+  @RequestMapping("/경로") : 공통 URL 접두사 설정
+  @GetMapping              : HTTP GET 요청 처리 (조회)
+  @PostMapping             : HTTP POST 요청 처리 (등록)
+  @PutMapping              : HTTP PUT 요청 처리 (수정)
+  @DeleteMapping           : HTTP DELETE 요청 처리 (삭제)
 
+[데이터 수신 어노테이션]
+  @RequestBody             : HTTP 바디의 JSON을 Java 객체(DTO)로 변환하여 받음
+  @PathVariable("이름")    : URL 경로의 {변수}를 매개변수로 받음
+                             예) /buys/list/{memEmail} → @PathVariable("memEmail") String memEmail
+  @RequestParam("키")      : FormData 또는 쿼리 파라미터를 받음
+                             예) @RequestParam("mainImg") MultipartFile mainImgFile
+
+[Lombok 어노테이션]
+  @Getter                  : getter 메서드 자동 생성 (getFieldName())
+  @Setter                  : setter 메서드 자동 생성 (setFieldName())
+  @ToString                : toString() 자동 생성 (콘솔 출력 시 필드값 표시)
 
 
-                                                                                      
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. ResponseEntity - HTTP 응답 제어
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ResponseEntity<?>로 HTTP 응답 전체(상태코드 + 헤더 + 바디)를 직접 제어
+
+  ResponseEntity.status(HttpStatus.CREATED).build()
+  → 상태코드 201, 바디 없음 (등록 성공 시)
+
+  ResponseEntity.status(HttpStatus.OK).body(result)
+  → 상태코드 200, JSON 바디 포함 (조회 성공 시)
+
+  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+  → 상태코드 500, 바디 없음 (서버 에러 시)
+
+  패턴:
+  try {
+      // 정상 처리
+      return ResponseEntity.status(HttpStatus.OK).body(result);
+  } catch (Exception e) {
+      log.error("에러 메시지", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+  }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. @Transactional (트랜잭션)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  쿼리가 여러 번 실행될 때 원자성(Atomicity) 보장
+  → 모든 쿼리 성공 시 COMMIT, 하나라도 실패 시 ROLLBACK
+
+  @Transactional(rollbackFor = Exception.class)
+  → 런타임 예외 + 체크 예외 모두 롤백 처리
+
+  사용 예:
+  - 도서 등록: SHOP_BOOK INSERT + BOOK_IMG INSERT (2번)
+  - 구매 등록: SHOP_BUY INSERT + BUY_DETAIL INSERT (2번)
+
+  원리:
+  @Transactional 메서드 → Spring이 프록시 객체 생성
+  → 메서드 시작 시 트랜잭션 시작
+  → 정상 종료 시 COMMIT
+  → 예외 발생 시 ROLLBACK
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. MyBatis XML 매퍼 핵심 개념
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[resultMap]
+  DB 컬럼명(MEM_EMAIL)과 Java 필드명(memEmail)의 차이를 매핑
+
+  <resultMap id="member" type="...MemberDTO">
+      <id     column="MEM_EMAIL" property="memEmail" />   ← PK 컬럼
+      <result column="MEM_NAME"  property="memName" />    ← 일반 컬럼
+  </resultMap>
+
+  <id>     : Primary Key 컬럼 (MyBatis 캐싱, 중복 제거에 활용)
+  <result> : 일반 컬럼 매핑
+  column   : DB 컬럼명
+  property : Java DTO 필드명
+
+[1:N 관계 처리 - collection]
+  하나의 BuyDTO에 여러 BuyDetailDTO가 있는 경우:
+
+  <resultMap id="buy" type="...BuyDTO">
+      <id column="BUY_NUM" property="buyNum"/>
+      ...
+      <collection property="detailList" resultMap="buyDetail"/>
+  </resultMap>
+
+  → BUY_NUM(PK) 기준으로 같은 구매번호의 행들이 자동으로 하나의 BuyDTO에 그룹화
+  → detailList 필드에 BuyDetailDTO 객체들이 리스트로 담김
+
+[useGeneratedKeys - AUTO_INCREMENT 키 자동 처리]
+  <insert id="insertBuy" useGeneratedKeys="true" keyProperty="buyNum">
+      INSERT INTO SHOP_BUY(BUY_PRICE, MEM_EMAIL) VALUES(#{buyPrice}, #{memEmail})
+  </insert>
+
+  → INSERT 완료 후 생성된 AUTO_INCREMENT 값을 buyDTO.buyNum에 자동으로 설정
+  → 이후 insertBuyDetail에서 이 buyNum을 FK로 사용 가능
+
+[FOREACH - 다중 INSERT]
+  <insert id="insertBuyDetail">
+      INSERT INTO BUY_DETAIL(BOOK_NUM, BUY_CNT, BUY_NUM) VALUES
+      <foreach collection="detailList" item="detail" separator=",">
+          (#{detail.bookNum}, #{detail.buyCnt}, #{buyNum})
+      </foreach>
+  </insert>
+
+  collection : 반복할 리스트 (buyDTO.detailList)
+  item       : 현재 반복 중인 객체 참조 이름
+  separator  : 각 반복 사이에 삽입할 문자열 (마지막에는 안 붙음)
+  결과 SQL   : VALUES (1,2,10), (3,1,10), (5,3,10)
+
+[#{} vs ${}]
+  #{변수명} : PreparedStatement 파라미터 바인딩 → SQL 인젝션 방지 (사용 권장)
+  ${변수명} : 문자열 그대로 삽입 → SQL 인젝션 위험 (컬럼명, 테이블명 동적 처리 시만 사용)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. SQL JOIN 정리
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[INNER JOIN]
+  두 테이블 모두 조건이 일치하는 행만 반환
+  조건이 없으면 결과에서 제외
+  사용: SHOP_CART INNER JOIN SHOP_BOOK (책 정보가 반드시 있어야 하는 경우)
+
+[LEFT JOIN]
+  왼쪽 테이블 전체 + 오른쪽 테이블에서 조건 일치하는 행
+  오른쪽 테이블에 일치하는 행이 없으면 NULL로 채움
+  사용: BOOK_IMG LEFT JOIN (이미지 없는 도서도 목록에 표시해야 하는 경우)
+
+[장바구니 조회 예시 - 3테이블 JOIN]
+  FROM SHOP_CART C
+  INNER JOIN SHOP_BOOK B ON C.BOOK_NUM = B.BOOK_NUM      ← 도서 정보 가져오기
+  LEFT JOIN BOOK_IMG I ON I.BOOK_NUM = B.BOOK_NUM        ← 이미지 가져오기
+      AND I.IS_MAIN = 'Y'                                 ← 대표 이미지만
+
+[구매 목록 조회 예시 - 4테이블 JOIN]
+  FROM SHOP_BUY B
+  INNER JOIN BUY_DETAIL D ON B.BUY_NUM = D.BUY_NUM      ← 구매 상세
+  INNER JOIN SHOP_BOOK BK ON D.BOOK_NUM = BK.BOOK_NUM   ← 도서 정보
+  LEFT JOIN BOOK_IMG I ON BK.BOOK_NUM = I.BOOK_NUM      ← 대표 이미지
+      AND I.IS_MAIN = 'Y'
+
+[SQL 계산 컬럼]
+  BK.BOOK_PRICE * D.BUY_CNT AS BUY_DETAIL_PRICE
+  → DB에 저장하지 않고 SELECT 시 실시간 계산
+  → AS로 별칭 지정 → resultMap에서 column="BUY_DETAIL_PRICE"로 매핑
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. ON DUPLICATE KEY UPDATE (장바구니 중복 처리)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  INSERT INTO SHOP_CART(BOOK_NUM, CART_CNT, MEM_EMAIL) VALUES(...)
+  ON DUPLICATE KEY UPDATE CART_CNT = CART_CNT + #{cartCnt}
+
+  사전 조건: SHOP_CART에 (BOOK_NUM, MEM_EMAIL) 복합 UNIQUE KEY 설정
+
+  동작 원리:
+  1. INSERT 시도
+  2. UNIQUE KEY 충돌 없으면 → 그냥 INSERT
+  3. UNIQUE KEY 충돌 있으면 → INSERT 취소 후 UPDATE 실행
+
+  결과: 같은 책을 다시 담으면 수량만 누적 증가
+  예)  현재 수량 2개 → 3개 추가 → CART_CNT = 2 + 3 = 5
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. 파일 업로드 처리 (UploadUtil)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[서버 처리 흐름]
+  1. React에서 FormData로 파일 전송
+  2. Spring에서 MultipartFile로 수신
+  3. UUID로 고유 파일명 생성 (중복 방지)
+  4. 서버 지정 경로에 파일 저장 (D:/01-STUDY/dev/upload/)
+  5. 원본파일명 + UUID파일명 + isMain 정보를 DB(BOOK_IMG)에 저장
+
+[UUID (Universally Unique Identifier)]
+  String uuid = UUID.randomUUID().toString();
+  → 전 세계적으로 유일한 128비트 식별자 생성
+  → 파일명 중복 방지: 파일명.확장자 대신 uuid.확장자로 저장
+
+[파일명 처리]
+  String originFileName = mainImgFile.getOriginalFilename();   // 원본 파일명
+  String extension = originFileName.substring(originFileName.lastIndexOf("."));  // 확장자
+  String uploadFileName = uuid + extension;                     // 저장 파일명
+  File file = new File(uploadPath + uploadFileName);            // 저장 경로
+  mainImgFile.transferTo(file);                                 // 파일 저장
+
+[React에서 파일 전송]
+  FormData 사용 + Content-Type: multipart/form-data 헤더 설정
+  const fileConfig = { header: {'Content-Type': 'multipart/form-data'} }
+  axios.post('/books', formData, fileConfig)
+
+[이미지 접근 URL]
+  WebConfig에서 /upload/** → file:///D:/01-STUDY/dev/upload/ 매핑
+  브라우저에서: http://localhost:8080/upload/uuid파일명.png
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. CORS 설정 (WebConfig)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  CORS (Cross-Origin Resource Sharing)
+  → 다른 출처(포트)에서 리소스에 접근하는 것을 허용하는 정책
+
+  React(localhost:5173)가 Spring(localhost:8080)으로 요청할 때 필요
+
+  WebConfig 설정:
+  .addMapping("/**")                      → 모든 경로 허용
+  .allowedOrigins("http://localhost:5173") → React 개발 서버만 허용
+  .allowedMethods("GET","POST","PUT","DELETE") → HTTP 메서드 허용
+  .allowedHeaders("*")                     → 모든 헤더 허용
+  .allowCredentials(true)                  → 쿠키/인증 정보 허용
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. React 핵심 개념
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[useState - 상태 관리]
+  const [값, 변경함수] = useState(초기값)
+  → 상태 변경 시 컴포넌트 자동 리렌더링
+
+  예)
+  const [cartList, setCartList] = useState([])  // 초기값: 빈 배열
+  setCartList(response.data)                     // 상태 변경 → 화면 갱신
+
+[useEffect - 사이드 이펙트 처리]
+  useEffect(() => { /* 실행할 코드 */ }, [의존성배열])
+  → 의존성 배열이 [] 이면 컴포넌트 마운트 시 1번만 실행
+  → 의존성 배열에 값이 있으면 해당 값 변경 시마다 실행
+
+  사용 예: API 데이터 초기 로딩, 이벤트 리스너 등록
+
+  ※ useEffect 안에서 async/await 직접 사용 불가
+  → 내부에 async 함수를 선언하고 호출하는 패턴 사용:
+  useEffect(() => {
+      const fetchData = async () => {
+          const result = await apiCall()
+          setData(result)
+      }
+      fetchData()
+  }, [])
+
+[중첩 라우트 (Nested Route)]
+  <Route path='/' element={<BasicLayout/>}>        ← 레이아웃 (바깥)
+      <Route path='login' element={<Login/>}/>     ← 페이지 (안쪽)
+  </Route>
+
+  → BasicLayout의 <Outlet/> 위치에 Login 컴포넌트가 렌더링됨
+  → URL: /login = 바깥 path(/) + 안쪽 path(login)
+
+[NavLink - 활성 링크 스타일]
+  Link와 달리 현재 URL과 일치하면 isActive = true
+  <NavLink to="/user/cart" className={({isActive}) => isActive ? styles.active : ''}>
+  → /user/cart 접속 시 자동으로 active 클래스 적용
+  → CSS Modules의 .active 스타일로 강조 표시
+
+[CSS Modules]
+  파일명: 컴포넌트명.module.css
+  import styles from './UserSide.module.css'
+  className={styles.active}
+  → 클래스명이 자동으로 고유 해시값으로 변환됨 (전역 CSS 충돌 방지)
+
+[Props 전달]
+  부모 → 자식: <Child propName={value} />
+  자식에서 사용: const Child = ({propName}) => { ... }
+
+  setLoginInfo를 상위(App)에서 하위(Header, Login)로 전달하여
+  로그인/로그아웃 시 Header UI 실시간 변경
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. Axios - HTTP 통신
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  axios.get(url)              → GET 요청
+  axios.post(url, data)       → POST 요청 (JSON 자동 변환)
+  axios.put(url, data)        → PUT 요청
+  axios.delete(url)           → DELETE 요청
+
+  response.data               → 서버 응답 바디 (JSON이 자동 파싱됨)
+  response.status             → HTTP 상태코드
+
+  에러 처리 패턴:
+  try {
+      const response = await axios.get(url)
+      return response.data;
+  } catch (e) {
+      console.log("에러", e)
+      // return 없으면 undefined 반환 → 호출부에서 null 체크 필요
+  }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. 장바구니 구매 기능 구현 (Cart.jsx)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[체크박스 선택 + 합계 계산]
+  const [checked, setChecked] = useState([])  // 선택된 cartNum 배열
+
+  const totalPrice = cartList
+      ?.filter(item => checked.includes(item.cartNum))   // 선택된 상품만
+      .reduce((sum, item) => sum + (item.bookPrice * item.cartCnt), 0) || 0
+
+  filter()  : 조건에 맞는 요소만 추출
+  reduce()  : 배열을 하나의 값으로 합산
+  includes(): 배열에 특정 값이 포함되어 있는지 확인
+
+[구매 후 장바구니 삭제 - Promise.all]
+  await Promise.all(checked.map(cartNum => deleteContent(cartNum)))
+
+  Promise.all([Promise, Promise, ...])
+  → 여러 비동기 작업을 동시에 실행하고 모두 완료될 때까지 대기
+  → await를 순차적으로 쓰면 하나씩 기다리지만, Promise.all은 병렬 처리
+  → 선택된 상품 수만큼 삭제 요청을 동시에 보내어 성능 향상
+
+[상태 불변성 유지]
+  setCartList(prev => prev.filter(item => item.cartNum !== cartNum))
+  → prev : 이전 상태
+  → 직접 수정하지 않고 새 배열 반환 (불변성 원칙)
+
+  setCartList(prev =>
+      prev.map(item =>
+          item.cartNum === cartNum ? { ...item, cartCnt: newCount } : item
+      )
+  )
+  → 해당 항목만 수정한 새 객체 생성 후 반환 (스프레드 연산자로 복사)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+13. 구매 기능 구현 (Buy)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[데이터 구조 (React → Spring)]
+  {
+      buyPrice: 35000,            // 총 결제 금액
+      memEmail: "user@test.com",  // 구매 회원
+      detailList: [               // 구매 도서 목록
+          { bookNum: 1, buyCnt: 2 },
+          { bookNum: 3, buyCnt: 1 }
+      ]
+  }
+
+[Spring INSERT 흐름]
+  1. SHOP_BUY INSERT (useGeneratedKeys로 buyNum 자동 생성)
+  2. BUY_DETAIL FOREACH INSERT (생성된 buyNum을 FK로 사용)
+  → @Transactional로 두 쿼리를 원자적으로 처리
+
+[BuyDetailDTO 설계 교훈]
+  처음: BookDTO bookDTO 필드로 중첩 구조 설계
+  → BookDTO 안에 bookImgList collection이 있어 500 에러 발생
+  → 불필요한 데이터 로딩, 복잡한 resultMap 충돌
+
+  개선: 필요한 필드(bookTitle, bookPrice, buyDetailPrice, uploadFileName)를
+       BuyDetailDTO에 직접 추가 (플랫 구조)
+  → 단순하고 명확한 매핑, 에러 없음
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+14. sessionStorage - 로그인 정보 관리
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  sessionStorage : 브라우저 탭이 닫힐 때까지 데이터 유지
+  localStorage   : 브라우저를 닫아도 데이터 유지
+
+  저장 (로그인 시):
+  sessionStorage.setItem("loginInfo", JSON.stringify({memEmail, memName, memRole}))
+
+  조회:
+  const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"))
+  → JSON.stringify : 객체 → 문자열 (저장)
+  → JSON.parse     : 문자열 → 객체 (읽기)
+
+  삭제 (로그아웃 시):
+  sessionStorage.removeItem("loginInfo")
+
+  활용:
+  - Header에서 로그인 상태 확인하여 버튼 분기
+  - Cart, BuyList에서 memEmail 추출하여 API 호출
+  - 비로그인 시 로그인 페이지로 강제 이동
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+15. DB 테이블 구조 (ERD 요약)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  SHOP_MEMBER (MEM_EMAIL PK)
+      └── SHOP_CART (BOOK_NUM + MEM_EMAIL UNIQUE)
+          └── SHOP_BOOK
+              └── BOOK_IMG (IS_MAIN Y/N)
+      └── SHOP_BUY (BUY_NUM PK AUTO_INCREMENT)
+          └── BUY_DETAIL (BUY_DETAIL_NUM PK AUTO_INCREMENT)
+              └── SHOP_BOOK
+
+  BOOK_CATEGORY (CATE_NUM PK)
+      └── SHOP_BOOK (CATE_NUM FK)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+16. API 엔드포인트 전체 정리
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  메서드  경로                              기능
+  ------  --------------------------------  --------------------------------
+  POST    /members                          회원가입
+  GET     /members/checkEmail/{email}       이메일 중복 확인 (true/false)
+  GET     /members/login                    로그인 (MemberDTO 반환)
+  POST    /books                            도서 등록 (FormData)
+  GET     /books/select                     도서 전체 목록 조회
+  GET     /books/detail/{bookNum}           도서 상세 조회
+  GET     /categories                       카테고리 목록 조회
+  POST    /cart                             장바구니 추가 (중복 시 수량 증가)
+  GET     /cartList/{memEmail}              장바구니 목록 조회
+  PUT     /cart                             장바구니 수량 수정
+  DELETE  /cart/{cartNum}                   장바구니 단건 삭제
+  POST    /buys                             구매 등록
+  GET     /buys/list/{memEmail}             구매 목록 조회
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+17. 오늘 해결한 주요 오류 및 교훈
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[문제1] MyBatis resultMap DTD 순서 오류
+  - 원인: <result> 태그가 <association> 뒤에 위치
+  - MyBatis DTD 규칙: <result>는 반드시 <association>, <collection> 앞에 와야 함
+  - 해결: <result> 태그들을 <association> 앞으로 이동
+
+[문제2] 구매 목록 조회 500 에러
+  - 원인: buyDetail resultMap에서 BookMapper.book을 association으로 참조
+  - BookMapper.book 안에 bookImgList collection 존재
+  - SELECT 쿼리에 BOOK_IMG 관련 컬럼(BOOK_IMG_NUM) 없어서 매핑 실패
+  - 해결: association 제거, BuyDetailDTO에 필요한 필드 직접 추가 (플랫 구조)
+
+[문제3] await 누락으로 Promise 객체 반환
+  - 원인: const response = selectList(...) → response가 Promise 객체
+  - 해결: const response = await selectList(...) → await 추가
+
+[문제4] react-router-dom에 없는 export import
+  - 원인: import { data } from 'react-router-dom' → data는 존재하지 않는 export
+  - 해결: 해당 import 문 삭제
+
+[문제5] URL 경로 불일치
+  - 원인: @RequestParam vs @PathVariable 혼용, API URL에 /list 경로 누락
+  - 해결: @PathVariable 사용, buyApi.js URL에 /list 추가
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+18. 미구현 기능 (추후 학습 예정)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  - BuyList.jsx UI 구현 (구매 목록 화면 출력)
+  - 마이페이지 (회원정보 수정)
+  - 도서 수정/삭제 (관리자 기능)
+  - 로그인 인터셉터/필터 (미로그인 접근 차단 강화)
+  - 페이지네이션 (도서 목록, 구매 목록)
+  - 검색 기능 (도서명, 저자 검색)
+
+================================================================================

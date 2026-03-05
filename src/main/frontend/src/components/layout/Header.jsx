@@ -54,7 +54,16 @@ const Header = ({ setLoginInfo }) => {
                 <li>
                   <button
                     className={styles.utilLink}
-                    onClick={() => nav('/mypage')}
+                    onClick={() => nav('/user/cart')}
+                  >
+                    장바구니
+                  </button>
+                </li>
+                <li className={styles.divider} />
+                <li>
+                  <button
+                    className={styles.utilLink}
+                    onClick={() => nav('/user/cart')}
                   >
                     마이페이지
                   </button>

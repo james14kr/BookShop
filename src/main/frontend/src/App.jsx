@@ -6,15 +6,37 @@ import './reset.css'
 import BookList from './pages/book/BookList'
 import Login from './pages/member/Login'
 import BookForm from './pages/book/BookForm'
-import WebStorage from './WebStorage'
 import { useState } from 'react'
 import BookDetail from './pages/book/BookDetail'
 import Cart from './pages/cart/Cart'
-import MyPageLayout from './components/layout/MyPageLayout'
-import CheckBoxTest from './study/CheckBoxTest'
+import UserLayout from './components/layout/UserLayout'
+import MyPage from './pages/member/MyPage'
+import BuyList from './pages/buy/BuyList'
 
+/**
+ * 루트 컴포넌트 - 전체 라우팅(페이지 이동) 구조 정의
+ *
+ * [중첩 라우트(Nested Route) 패턴]
+ *  - 바깥 Route : 레이아웃 컴포넌트 (공통 Header, Sidebar 포함)
+ *  - 안쪽 Route : 실제 콘텐츠 페이지 컴포넌트
+ *  - 바깥 레이아웃의 <Outlet/> 자리에 안쪽 페이지가 렌더링됨
+ *  - 안쪽 Route의 path에는 '/' 사용 안 함 (바깥 path와 자동으로 합쳐짐)
+ *
+ * [레이아웃 구조]
+ *  BasicLayout  : Header + <Outlet/>
+ *  ManagerLayout: ManagerHeader + ManageSide + <Outlet/>
+ *  UserLayout   : Header + UserSide + <Outlet/>
+ *
+ * [loginInfo 상태 관리]
+ *  - sessionStorage에서 초기값 읽어옴 (페이지 새로고침 시 로그인 유지)
+ *  - setLoginInfo를 Header, Login 컴포넌트에 prop으로 전달
+ *  - 로그인 시: setLoginInfo({memEmail, memName, memRole}) → Header 버튼 변경
+ *  - 로그아웃 시: setLoginInfo({}) → sessionStorage 삭제 → Header 버튼 원복
+ */
 function App() {
 
+  // sessionStorage에서 로그인 정보 초기화
+  // { memEmail, memName, memRole } 또는 null
   const [loginInfo, setLoginInfo] = useState(
     JSON.parse(sessionStorage.getItem("loginInfo"))
   );
@@ -22,53 +44,29 @@ function App() {
   return (
     <>
       <Routes>
-        {/* Route를 아래와 같이 중복으로 사용하면 두 컴포넌트를 함게 띄울 수 있음 */}
-        {/* 이 때 컴포넌트에 접근하는 url은 바깥 Route와 안쪽 Route의 Path로 나열을 지정 */}
-        {/* 단, 안쪽 Route의 path속성값은 '/'를 붙이지 않는다*/}
-        {/* 바깥 컴포넌트에 <Outlet/> 컴포넌트를 사용하여 함께 열리는 컴포넌트의 위치를 지정한다. */}
-
-        {/* 일반 회원이 접근하는 페이지들 */}
+        {/* ── BasicLayout: 일반 회원 접근 영역 (Header만 표시) ── */}
         <Route path='/' element = {<BasicLayout setLoginInfo ={setLoginInfo}/>}>
-
-          {/* WebStorage 학습용 컴포넌트 */}
-          <Route path='storage' element = {<WebStorage/>}/>\
-
-          {/* checkBox controll 학습용 컴포넌트 */}
-          <Route path='chk' element = {<CheckBoxTest/>}/>
-
-          {/* 도서 목록 페이지 URL : localhost:5173 */}
-          <Route path='' element = {<BookList/>}/>
-
-          {/* 회원가입페이지, URL : localhost:5173/join */}
-          <Route path='join' element = {<Join/>}/>
-
-          {/* 로그인페이지, URL : localhost:5173/login */}
-          <Route path='login' element = {<Login setLoginInfo={setLoginInfo}/>}/>
-
-          {/* 도서 상세정보 페이지  URL : localhost:5173/*/}
-          <Route path="books/:bookNum" element={<BookDetail />} />
-
-          {/* 도서 장바구니 페이지 URL : locahost:5173/cart */}
-          <Route path='cart' element={<Cart/>}/>
-
+          <Route path='' element = {<BookList/>}/>              {/* 메인 - localhost:5173 */}
+          <Route path='join' element = {<Join/>}/>             {/* 회원가입 - /join */}
+          <Route path='login' element = {<Login setLoginInfo={setLoginInfo}/>}/> {/* 로그인 - /login */}
+          <Route path="books/:bookNum" element={<BookDetail />} /> {/* 도서 상세 - /books/:bookNum */}
         </Route>
 
-        {/* 매니저 권한의 회원이 접근하는 페이지들 */}
+        {/* ── ManagerLayout: 매니저 권한 접근 영역 (ManagerHeader + ManageSide) ── */}
         <Route path='/manage' element = {<ManagerLayout setLoginInfo = {setLoginInfo}/>}>
-
-          {/* 상품 등록 페이지, URL : localhost:5173/manage/book-form */}
-          <Route path='book-form' element = {<BookForm/>}/>
-
-
+          <Route path='book-form' element = {<BookForm/>}/>    {/* 도서 등록 - /manage/book-form */}
         </Route>
 
-        <Route path='/myPage' element={<MyPageLayout setLoginInfo={setLoginInfo}/>}>
-          <Route path='cart' element={<Cart/>}/>
+        {/* ── UserLayout: 로그인 사용자 영역 (Header + UserSide 사이드 메뉴) ── */}
+        <Route path='/user' element={<UserLayout setLoginInfo={setLoginInfo}/>}>
+          <Route path='cart' element={<Cart/>}/>               {/* 장바구니 - /user/cart */}
+          <Route path='buyList' element={<BuyList/>}/>         {/* 구매내역 - /user/buyList */}
+          <Route path='mypage' element={<MyPage/>}/>           {/* 마이페이지 - /user/mypage */}
         </Route>
 
       </Routes>
     </>
   )
-} 
+}
 
 export default App
