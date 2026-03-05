@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
+
+/* ── 최상위 컨테이너 ── */
+.container {
+  padding: 44px 52px;
+  min-height: 80vh;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ── 페이지 헤더 ── */
+.pageHeader {
+  margin-bottom: 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.pageTitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.9rem;
+  color: #1a1a2e;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  margin-bottom: 6px;
+  color: #c9a96e;
+}
+
+.pageSubtitle {
+  font-size: 0.82rem;
+  color: #bbb;
+  letter-spacing: 0.03em;
+}
+
+/* ── 지표 카드 그리드 (2열) ── */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* ── 지표 카드 1개 ── */
+.card {
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+  animation: fadeUp 0.4s ease both;
+}
+
+.card:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 카드 아이콘 ── */
+.cardIcon {
+  font-size: 2.2rem;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* ── 카드 본문 (라벨 + 수치) ── */
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* "오늘의 주문" 라벨 */
+.cardLabel {
+  font-size: 0.78rem;
+  color: #aaa;
+  letter-spacing: 0.05em;
+}
+
+/* 수치 (숫자 + 단위) */
+.cardValue {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  color: #1a1a2e;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+/* "건" / "원" 단위 */
+.cardUnit {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 1rem;
+  color: #c9a96e;
+  margin-left: 4px;
+}

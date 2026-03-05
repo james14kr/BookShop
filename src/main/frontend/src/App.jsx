@@ -12,6 +12,7 @@ import Cart from './pages/cart/Cart'
 import UserLayout from './components/layout/UserLayout'
 import MyPage from './pages/member/MyPage'
 import BuyList from './pages/buy/BuyList'
+import DashBoard from './pages/admin/DashBoard'
 
 /**
  * 루트 컴포넌트 - 전체 라우팅(페이지 이동) 구조 정의
@@ -55,6 +56,7 @@ function App() {
         {/* ── ManagerLayout: 매니저 권한 접근 영역 (ManagerHeader + ManageSide) ── */}
         <Route path='/manage' element = {<ManagerLayout setLoginInfo = {setLoginInfo}/>}>
           <Route path='book-form' element = {<BookForm/>}/>    {/* 도서 등록 - /manage/book-form */}
+          <Route path='dashBoard' element = {<DashBoard/>}/>   {/* 관리자 홈 - /manage/dashBoard */} 
         </Route>
 
         {/* ── UserLayout: 로그인 사용자 영역 (Header + UserSide 사이드 메뉴) ── */}

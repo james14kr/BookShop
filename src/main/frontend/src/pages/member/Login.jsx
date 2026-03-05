@@ -34,7 +34,7 @@ const Login = ({ setLoginInfo }) => {
       setLoginInfo(loginInfo)
 
       if (loginInfo.memRole === 'MANAGER') {
-        nav('/manage/book-form')
+        nav('/manage/dashBoard')
       } else {
         nav('/')
       }

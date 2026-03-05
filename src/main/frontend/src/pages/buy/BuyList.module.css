@@ -1,0 +1,393 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;600&display=swap');
+
+/* ═══════════════════════════════════════════════════════════
+   BuyList.module.css - 구매 내역 페이지 스타일
+   디자인 시스템: Cart.module.css / UserSide.module.css 통일
+   컬러: #1a1a2e (다크 네이비), #c9a96e (골드), #e8c98a (라이트 골드)
+   폰트: DM Serif Display (제목), Noto Sans KR (본문)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 최상위 컨테이너 ── */
+.container {
+  padding: 44px 52px;
+  min-height: 80vh;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   페이지 헤더 (제목 + 건수)
+   ═══════════════════════════════════════════════════════════ */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+/* 제목 + 건수를 같은 라인에 나란히 배치 */
+.pageTitleGroup {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+/* "구매내역" 큰 제목 */
+.pageTitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.9rem;
+  color: #1a1a2e;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* "N건" 작은 카운트 */
+.itemCount {
+  font-size: 0.8rem;
+  color: #bbb;
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   빈 내역 안내 (구매 이력이 없을 때)
+   ═══════════════════════════════════════════════════════════ */
+.emptyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+  gap: 16px;
+}
+
+/* 📦 이모지 */
+.emptyIcon {
+  font-size: 3.5rem;
+  opacity: 0.35;
+}
+
+/* "구매 내역이 없습니다." 텍스트 */
+.emptyText {
+  font-size: 0.95rem;
+  color: #bbb;
+  letter-spacing: 0.02em;
+}
+
+/* "도서 둘러보기 →" 버튼 */
+.shopBtn {
+  margin-top: 8px;
+  background: none;
+  border: 1.5px solid #1a1a2e;
+  color: #1a1a2e;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.shopBtn:hover {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   구매 목록 (BuyDTO[] 전체를 감싸는 wrapper)
+   ═══════════════════════════════════════════════════════════ */
+.buyList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;         /* 카드 사이 간격 */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   구매 카드 (BuyDTO 1건)
+   - 아코디언 구조: 헤더(항상 보임) + 상세(토글로 펼침)
+   - animation: fadeUp으로 스크롤 없이 자연스럽게 등장
+   ═══════════════════════════════════════════════════════════ */
+.buyCard {
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  overflow: hidden;          /* 상세 영역이 카드 밖으로 넘치지 않게 */
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+  animation: fadeUp 0.4s ease both;  /* index * 0.07s delay는 JSX에서 style로 적용 */
+}
+
+.buyCard:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+}
+
+/* fadeUp 키프레임: 아래→위로 올라오며 나타남 */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   구매 카드 헤더 (클릭 시 상세 토글)
+   ═══════════════════════════════════════════════════════════ */
+.buyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  cursor: pointer;
+  transition: background 0.18s;
+  user-select: none;          /* 클릭 시 텍스트 선택 방지 */
+}
+
+.buyHeader:hover {
+  background: #fafaf8;
+}
+
+/* 펼쳐진 상태의 헤더: 하단 구분선 추가 */
+.buyHeaderOpen {
+  background: #fafaf8;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+/* 헤더 좌측: 구매번호 배지 + 날짜 + 종류 수 */
+.buyHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* "#123" 형태의 구매번호 배지 */
+.buyNumBadge {
+  font-family: 'DM Serif Display', serif;
+  font-size: 0.9rem;
+  color: #fff;
+  background: #1a1a2e;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  color: #c9a96e;
+}
+
+/* 날짜 + 종류 수 묶음 */
+.buyMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* "2024.01.15 14:30" 날짜 텍스트 */
+.buyDate {
+  font-size: 0.82rem;
+  color: #888;
+  letter-spacing: 0.02em;
+}
+
+/* "총 N종" 텍스트 */
+.buyKindCount {
+  font-size: 0.72rem;
+  color: #bbb;
+  letter-spacing: 0.03em;
+}
+
+/* 헤더 우측: 결제금액 + 화살표 */
+.buyHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 결제금액 묶음 (라벨 + 금액) */
+.buyTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* 첫 번째 책 제목 (2종 이상이면 "외 N종" 텍스트 포함) */
+.firstBookTitle {
+  font-size: 0.82rem;
+  color: #444;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;   /* 긴 제목은 말줄임 처리 */
+  text-align: right;
+  margin-bottom: 4px;
+}
+
+/* "결제금액" 라벨 */
+.totalLabel {
+  font-size: 0.65rem;
+  color: #ccc;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 금액 숫자 */
+.totalAmount {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  color: #1a1a2e;
+}
+
+/* "원" 단위 */
+.totalUnit {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.8rem;
+  margin-left: 2px;
+}
+
+/* ══════════════════════════════════════════════════════
+   아코디언 화살표 ▼
+   - 기본: 아래를 향함 (닫힘)
+   - .arrowOpen 적용 시: 위를 향함 (열림)
+   ══════════════════════════════════════════════════════ */
+.arrow {
+  font-size: 0.75rem;
+  color: #bbb;
+  transition: transform 0.28s ease;   /* 회전 애니메이션 */
+  display: inline-block;
+}
+
+/* 펼쳐진 상태: 화살표 180도 회전 */
+.arrowOpen {
+  transform: rotate(180deg);
+  color: #c9a96e;                       /* 골드 색으로 변경 */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   구매 상세 펼침 영역 (아코디언 콘텐츠)
+   ═══════════════════════════════════════════════════════════ */
+.detailSection {
+  padding: 16px 28px 20px;
+  background: #fafaf8;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DetailCard - 구매 상세 1건 카드 (BuyDetailDTO 1건)
+   도서 이미지 | 제목+단가 | 수량 | 결제금액
+   ═══════════════════════════════════════════════════════════ */
+.detailCard {
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: box-shadow 0.18s ease;
+}
+
+.detailCard:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+/* 도서 썸네일 이미지 박스 */
+.bookThumb {
+  width: 52px;
+  height: 70px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #e8e0d4, #d5c9bb);  /* 이미지 로딩 전 플레이스홀더 */
+}
+
+.bookImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 도서 제목 + 단가 묶음 */
+.bookInfo {
+  flex: 1;
+  min-width: 0;        /* flex 자식에서 텍스트 overflow 동작을 위해 필요 */
+}
+
+/* 도서 제목 */
+.bookTitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  margin-bottom: 5px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;   /* 긴 제목은 말줄임 처리 */
+}
+
+/* "단가 N원" 텍스트 */
+.bookUnitPrice {
+  font-size: 0.75rem;
+  color: #aaa;
+  letter-spacing: 0.02em;
+}
+
+/* 수량/금액 셀 공통 스타일 (라벨 + 값을 세로로 배치) */
+.detailCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  min-width: 70px;
+}
+
+/* 셀 라벨: "수량", "결제금액" */
+.cellLabel {
+  font-size: 0.62rem;
+  color: #ccc;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 수량 값: "N권" */
+.cellValue {
+  font-size: 0.85rem;
+  color: #555;
+  font-weight: 500;
+}
+
+/* 결제금액 값: "N원" (골드 강조) */
+.cellPriceValue {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  color: #c9a96e;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   상세 하단 합계 푸터
+   ═══════════════════════════════════════════════════════════ */
+.detailFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 14px 4px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin-top: 4px;
+}
+
+/* "총 결제금액" 라벨 */
+.detailFooterLabel {
+  font-size: 0.8rem;
+  color: #888;
+  letter-spacing: 0.03em;
+}
+
+/* 총합 금액 (골드 + DM Serif Display) */
+.detailFooterAmount {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.35rem;
+  color: #c9a96e;
+  letter-spacing: 0.01em;
+}

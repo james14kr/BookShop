@@ -4,6 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom'
 
 const NAV_GROUPS = [
   {
+    label: '관리자',
+    items: [
+      { key: 'dashBoard',  label: '관리자 홈',  icon: '👥' }
+    ]
+  },
+  {
     label: '도서 관리',
     items: [
       { key: 'book-form',  label: '도서 등록',  icon: '＋' },
