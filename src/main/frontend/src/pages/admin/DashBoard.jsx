@@ -2,17 +2,26 @@ import React, { useEffect, useState } from 'react'
 import { getSummary } from '../../api/dashboardApi'
 import styles from './DashBoard.module.css'
 
+// ═══════════════════════════════════════════════════════════
+//  DashBoard 컴포넌트 - 관리자 대시보드 페이지
+//  - 마운트 시 getSummary() 1번 호출로 4개 지표 한 번에 조회
+//  - URL: /manage/dashBoard (ManagerLayout 안에서 렌더링)
+// ═══════════════════════════════════════════════════════════
 const DashBoard = () => {
 
-  // 서버에서 받아온 대시보드 지표 상태
   // DashBoardDTO { todayOrderCount, monthOrderCount, todaySales, monthSales }
+  // 초기값 null → API 응답 전 숫자 자리에 '-' 표시
   const [summary, setSummary] = useState(null)
 
-  // 컴포넌트 마운트 시 지표 조회
+  // ─────────────────────────────────────────────────────────
+  //  컴포넌트 마운트 시 대시보드 지표 1번만 조회
+  //  의존성 배열 [] → 마운트 시 1회만 실행
+  // ─────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchSummary = async () => {
       const response = await getSummary()
       if (response) {
+        // response.data = { todayOrderCount, monthOrderCount, todaySales, monthSales }
         setSummary(response.data)
       }
     }
@@ -28,10 +37,22 @@ const DashBoard = () => {
         <p className={styles.pageSubtitle}>오늘의 현황을 확인하세요</p>
       </div>
 
-      {/* ── 지표 카드 그리드 ── */}
+      {/*
+        ── 지표 카드 그리드 (2열 배치) ──
+
+        [삼항 연산자 패턴]
+        {summary ? summary.todayOrderCount : '-'}
+        → summary가 null이면(API 응답 전) '-' 표시
+        → summary에 값이 있으면 실제 숫자 표시
+
+        [toLocaleString()]
+        숫자를 천 단위 쉼표 포함 문자열로 변환
+        예) 3840000 → "3,840,000"
+        금액처럼 큰 숫자를 읽기 쉽게 표현할 때 사용
+      */}
       <div className={styles.cardGrid}>
 
-        {/* 오늘의 주문건수 */}
+        {/* ── 오늘의 주문건수 카드 ── */}
         <div className={styles.card}>
           <div className={styles.cardIcon}>📦</div>
           <div className={styles.cardBody}>
@@ -43,7 +64,7 @@ const DashBoard = () => {
           </div>
         </div>
 
-        {/* 이번 달 주문건수 */}
+        {/* ── 이번 달 주문건수 카드 ── */}
         <div className={styles.card}>
           <div className={styles.cardIcon}>📋</div>
           <div className={styles.cardBody}>
@@ -55,19 +76,20 @@ const DashBoard = () => {
           </div>
         </div>
 
-        {/* 오늘의 매출 */}
+        {/* ── 오늘의 매출액 카드 ── */}
         <div className={styles.card}>
           <div className={styles.cardIcon}>💰</div>
           <div className={styles.cardBody}>
             <span className={styles.cardLabel}>오늘의 매출</span>
             <span className={styles.cardValue}>
+              {/* toLocaleString()으로 천 단위 쉼표 표시 */}
               {summary ? summary.todaySales.toLocaleString() : '-'}
               <span className={styles.cardUnit}>원</span>
             </span>
           </div>
         </div>
 
-        {/* 이번 달 매출 */}
+        {/* ── 이번 달 매출액 카드 ── */}
         <div className={styles.card}>
           <div className={styles.cardIcon}>📈</div>
           <div className={styles.cardBody}>

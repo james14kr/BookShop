@@ -502,11 +502,181 @@
 18. 미구현 기능 (추후 학습 예정)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  - BuyList.jsx UI 구현 (구매 목록 화면 출력)
+  - ~~BuyList.jsx UI 구현 (구매 목록 화면 출력)~~ → 완료
   - 마이페이지 (회원정보 수정)
   - 도서 수정/삭제 (관리자 기능)
   - 로그인 인터셉터/필터 (미로그인 접근 차단 강화)
   - 페이지네이션 (도서 목록, 구매 목록)
   - 검색 기능 (도서명, 저자 검색)
+
+================================================================================
+  추가 학습일 : 2026-03-05
+================================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+19. 관리자 대시보드 구현 (DashBoard 패키지)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[구현 기능]
+  - 오늘 주문건수    : SELECT COUNT(*) WHERE DATE(BUY_DATE) = CURDATE()
+  - 이번 달 주문건수 : SELECT COUNT(*) WHERE YEAR/MONTH 조건
+  - 오늘 매출액      : SELECT COALESCE(SUM(BUY_PRICE), 0) WHERE 오늘
+  - 이번 달 매출액   : SELECT COALESCE(SUM(BUY_PRICE), 0) WHERE 이번달
+
+[패키지 구조]
+  dashBoard/
+    ├── controller/DashBoardController.java
+    ├── service/DashBoardService.java
+    ├── mapper/DashBoardMapper.java
+    └── dto/DashBoardDTO.java
+  resources/mapper/dashBoard-mapper.xml
+  frontend/api/dashboardApi.js
+  frontend/pages/admin/DashBoard.jsx
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+20. @GetMapping URL 중복 → Ambiguous Mapping 에러
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ❌ 잘못된 방법 - 동일한 URL에 메서드 여러 개 지정
+    @GetMapping("")  public ResponseEntity<?> getTodayOrderCount() { ... }
+    @GetMapping("")  public ResponseEntity<?> getMonthOrderCount() { ... }  ← 중복!
+    @GetMapping("")  public ResponseEntity<?> getTodaySales()      { ... }  ← 중복!
+
+    → 에러: Ambiguous handler methods mapped for '/manage/dashBoard'
+    → Spring은 같은 HTTP 메서드 + 같은 URL이 여러 개면
+      어느 메서드를 실행할지 알 수 없어 애플리케이션 시작 자체를 거부함
+
+  ✅ 해결 방법 A - URL을 각각 다르게 지정
+    @GetMapping("/todayOrder")  → GET /manage/dashBoard/todayOrder
+    @GetMapping("/monthOrder")  → GET /manage/dashBoard/monthOrder
+
+  ✅ 해결 방법 B - 메서드 1개 + DTO로 통합 반환 (이 프로젝트에서 선택)
+    @GetMapping("")
+    public ResponseEntity<?> getSummary() {
+        DashBoardDTO result = dashBoardService.getSummary();
+        return ResponseEntity.ok(result);   // 4개 지표 한 번에 반환
+    }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+21. 단일 API 통합 설계 (DashBoardDTO 활용)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  대시보드처럼 여러 지표를 동시에 보여줄 때 API를 하나로 통합하면 효율적
+
+  ❌ 지표마다 API 분리 → 프론트에서 4번 요청
+    GET /manage/dashBoard/todayOrder
+    GET /manage/dashBoard/monthOrder
+    GET /manage/dashBoard/todaySales
+    GET /manage/dashBoard/monthSales
+
+  ✅ DTO 하나에 통합 → 프론트에서 1번 요청으로 해결
+    GET /manage/dashBoard
+    → { todayOrderCount: 5, monthOrderCount: 42,
+        todaySales: 125000, monthSales: 3840000 }
+
+  [Service에서 DTO 조립 패턴]
+    public DashBoardDTO getSummary() {
+        DashBoardDTO dto = new DashBoardDTO();                              // 빈 DTO 생성
+        dto.setTodayOrderCount(dashBoardMapper.selectTodayOrderCount());   // 필드 채우기
+        dto.setMonthOrderCount(dashBoardMapper.selectMonthOrderCount());
+        dto.setTodaySales(dashBoardMapper.selectTodaySales());
+        dto.setMonthSales(dashBoardMapper.selectMonthSales());
+        return dto;                                                         // 완성된 DTO 반환
+    }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+22. MariaDB 날짜/집계 함수
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[날짜 함수]
+  CURDATE()       : 오늘 날짜 반환        예) '2026-03-05'
+  NOW()           : 현재 날짜+시간 반환   예) '2026-03-05 14:30:00'
+  DATE(컬럼)      : datetime에서 날짜만 추출  '2026-03-05 14:30:00' → '2026-03-05'
+  YEAR(컬럼)      : 연도 추출             예) 2026
+  MONTH(컬럼)     : 월 추출              예) 3
+
+  [DATE() 함수가 필요한 이유]
+  BUY_DATE가 DATETIME 타입이므로 CURDATE()와 직접 비교 불가
+  DATE(BUY_DATE) 로 날짜 부분만 추출해야 CURDATE()와 비교 가능
+
+  [오늘 조건]   WHERE DATE(BUY_DATE) = CURDATE()
+  [이번달 조건] WHERE YEAR(BUY_DATE) = YEAR(NOW()) AND MONTH(BUY_DATE) = MONTH(NOW())
+  ※ YEAR 없이 MONTH만 쓰면 작년 같은 달 데이터도 포함됨 → 반드시 둘 다 사용
+
+[집계 함수]
+  COUNT(*)        : 전체 행 수 (NULL 포함)
+  SUM(컬럼)       : 합계 (대상 행이 없으면 NULL 반환)
+
+[COALESCE 함수]
+  COALESCE(값1, 값2, ...) → NULL이 아닌 첫 번째 값 반환
+
+  사용 이유: SUM()은 행이 없으면 NULL 반환 → Java에서 NPE 발생 가능
+  COALESCE(SUM(BUY_PRICE), 0) → NULL 대신 0 반환하여 안전하게 처리
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+23. int vs long 타입 선택 기준
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  int  : 약 -21억 ~ +21억 → 건수(COUNT) 에 적합
+  long : 약 -922경 ~ +922경 → 금액(SUM) 에 적합
+
+  금액은 쌓이면 int 범위를 초과할 수 있으므로 long 사용
+  DashBoardDTO.todaySales, monthSales → long 타입
+  DashBoardMapper 반환 타입             → long
+  dashBoard-mapper.xml                  → resultType="long"
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+24. CORS 에러 - Vite 포트 자동 변경으로 인한 불일치
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [오류 메시지]
+  Access to XMLHttpRequest at 'http://localhost:8080/...' from origin
+  'http://localhost:5174' has been blocked by CORS policy
+
+  [원인]
+  WebConfig.java 허용 포트 : http://localhost:5173
+  실행 중인 React 포트    : http://localhost:5174  ← 불일치!
+
+  Vite는 5173이 이미 사용 중이면 자동으로 5174로 올림
+  → 이전 Vite 프로세스가 종료되지 않은 상태에서 재실행 시 발생
+
+  [에러 연쇄 흐름]
+  1. CORS 차단 → 브라우저가 요청을 막음
+  2. 403 Forbidden → 서버가 허용하지 않은 출처 거부
+  3. TypeError: Cannot read properties of undefined ('data')
+     → axios catch에서 return 없이 undefined 반환
+     → 호출부에서 response.data 접근 시 에러
+
+  [해결 방법 A] WebConfig.java에 5174도 추가
+    .allowedOrigins("http://localhost:5173", "http://localhost:5174")
+
+  [해결 방법 B] vite.config.js에 포트 고정 (권장)
+    server: { port: 5173, strictPort: true }
+    → strictPort: true → 5173 사용 중이면 자동 변경 대신 에러 발생시켜 명확히 알림
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+25. React - 로딩 전 화면 처리 패턴 (삼항 연산자)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  API 응답 대기 중에 빈 화면 또는 에러가 나지 않도록
+  초기값을 null로 설정하고 삼항 연산자로 처리
+
+  const [summary, setSummary] = useState(null)   ← 초기값 null
+
+  {summary ? summary.todayOrderCount : '-'}
+  → summary가 null(API 응답 전) → '-' 표시
+  → summary에 값이 있으면 → 실제 숫자 표시
+
+  [toLocaleString()]
+  숫자를 천 단위 쉼표 포함 문자열로 변환
+  3840000 → "3,840,000"
+  매출액처럼 큰 숫자를 읽기 쉽게 표현할 때 사용
 
 ================================================================================
