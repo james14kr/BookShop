@@ -104,7 +104,7 @@ const Join = () => {
   const checkId = async () => {
     const response = await checkEmail(info.memEmail)
     if (response.data) {
-      alert('이미 사용 중인 이메일입니다.')
+      alert('사용 가능한 이메일입니다.')
     } else {
       setEmailChecked(true)
       setIsDesable(false)
