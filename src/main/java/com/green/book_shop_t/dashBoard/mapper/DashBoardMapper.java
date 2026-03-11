@@ -1,6 +1,10 @@
 package com.green.book_shop_t.dashBoard.mapper;
 
+import com.green.book_shop_t.dashBoard.dto.TopBookDTO;
+import com.green.book_shop_t.dashBoard.dto.TopMemberDTO;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * 대시보드 DB 쿼리 실행 Mapper 인터페이스
@@ -31,5 +35,9 @@ public interface DashBoardMapper {
 
   // 이번 달 매출액 → XML: SELECT COALESCE(SUM(BUY_PRICE), 0) WHERE 이번달
   long selectMonthSales();
+
+  List<TopMemberDTO> selectTopMember();
+
+  List<TopBookDTO> selectTopBook();
 
 }

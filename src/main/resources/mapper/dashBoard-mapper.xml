@@ -6,6 +6,18 @@
     DashBoardMapper 인터페이스의 메서드명 = 각 쿼리 태그의 id 값
 -->
 <mapper namespace="com.green.book_shop_t.dashBoard.mapper.DashBoardMapper">
+    <resultMap id="topMember" type="com.green.book_shop_t.dashBoard.dto.TopMemberDTO">
+        <result column="MEM_EMAIL" property="memEmail"/>
+        <result column="SALE_CNT_PER_MEMBER" property="saleCntPerMember"/>
+        <result column="SALE_PER_MEMBER" property="salePerMember"/>
+    </resultMap>
+
+    <resultMap id="topBook" type="com.green.book_shop_t.dashBoard.dto.TopBookDTO">
+        <result column="BOOK_NUM" property="bookNum"/>
+        <result column="BOOK_TITLE" property="bookTitle"/>
+        <result column="AUTHOR" property="author"/>
+        <result column="TOTAL_BUY_CNT" property="totalBuyCnt"/>
+    </resultMap>
 
     <!--
         [학습 포인트] MariaDB 날짜 함수 정리
@@ -77,6 +89,25 @@
         FROM SHOP_BUY
         WHERE YEAR(BUY_DATE)  = YEAR(NOW())
           AND MONTH(BUY_DATE) = MONTH(NOW())
+    </select>
+
+    <select id="selectTopMember" resultMap="topMember">
+        SELECT MEM_EMAIL
+        , COUNT(BUY_NUM) SALE_CNT_PER_MEMBER
+        , SUM(BUY_PRICE) SALE_PER_MEMBER
+        FROM SHOP_BUY
+        GROUP BY MEM_EMAIL
+        ORDER BY SALE_PER_MEMBER DESC
+        LIMIT 5;
+    </select>
+
+    <select id="selectTopBook" resultMap="topBook">
+        SELECT D.BOOK_NUM, SUM(BUY_CNT) TOTAL_BUY_CNT, BOOK_TITLE, AUTHOR
+        FROM BUY_DETAIL D, SHOP_BOOK B
+        WHERE D.BOOK_NUM = B.BOOK_NUM
+        GROUP BY D.BOOK_NUM
+        ORDER BY TOTAL_BUY_CNT DESC, BOOK_TITLE ASC
+        LIMIT  5;
     </select>
 
 </mapper>

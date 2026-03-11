@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 /**
  * 관리자 대시보드 지표를 담는 DTO
  *
@@ -38,5 +40,7 @@ public class DashBoardDTO {
   private int  monthOrderCount;   // 이번 달 주문건수 (COUNT 결과)
   private long todaySales;        // 오늘 매출액    (SUM 결과, long 사용)
   private long monthSales;        // 이번 달 매출액  (SUM 결과, long 사용)
+  private List<TopMemberDTO> topMemberList;
+  private List<TopBookDTO> topBookList;
 
 }

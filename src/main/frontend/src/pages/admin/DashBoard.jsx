@@ -101,6 +101,54 @@ const DashBoard = () => {
           </div>
         </div>
 
+        <div className={styles.table}>
+          <h3>🏆구매 랭킹 회원 TOP 5</h3>
+          <table>
+            <thead>
+              <tr>
+                <td>No</td>
+                <td>사용자</td>
+                <td>구매건수</td>
+                <td>총 구매금액</td>
+              </tr>
+            </thead>
+            <tbody>
+              {summary?.topMemberList?.map((item, index) => (
+                <tr key={item.memEmail}>
+                  <td>{index+1}</td>
+                  <td>{item.memEmail}</td>
+                  <td>{item.saleCntPerMember}</td>
+                  <td>{item.salePerMember.toLocaleString()}원</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className={styles.table}>
+          <h3>🏆판매 랭킹 책 TOP 5</h3>
+          <table>
+            <thead>
+              <tr>
+                <td>No</td>
+                <td>제목</td>
+                <td>작가</td>
+                <td>총 구매건수</td>
+              </tr>
+            </thead>
+            <tbody>
+              {summary?.topBookList?.map((item, index) => (
+                <tr key={item.bookNum}>
+                  <td>{index+1}</td>
+                  <td>{item.bookTitle}</td>
+                  <td>{item.author}</td>
+                  <td>{item.totalBuyCnt}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   )

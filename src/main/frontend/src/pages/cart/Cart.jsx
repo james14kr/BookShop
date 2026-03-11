@@ -215,7 +215,7 @@ const Cart = () => {
           {/* 도서 목록 페이지로 이동 버튼 */}
           <button className={styles.shopBtn} onClick={() => nav('/')}>도서 둘러보기 →</button>
         </div>
-      ) : (
+        ) : (
         <>
           {/* ── 상품 카드 목록 ── */}
           <div className={styles.cartList}>

@@ -1,9 +1,13 @@
 package com.green.book_shop_t.dashBoard.service;
 
 import com.green.book_shop_t.dashBoard.dto.DashBoardDTO;
+import com.green.book_shop_t.dashBoard.dto.TopBookDTO;
+import com.green.book_shop_t.dashBoard.dto.TopMemberDTO;
 import com.green.book_shop_t.dashBoard.mapper.DashBoardMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 관리자 대시보드 비즈니스 로직 Service
@@ -58,6 +62,15 @@ public class DashBoardService {
     return dashBoardMapper.selectMonthSales();
   }
 
+
+  public List<TopMemberDTO> getTopMember(){
+    return dashBoardMapper.selectTopMember();
+  }
+
+  public List<TopBookDTO> getTopBook(){
+    return dashBoardMapper.selectTopBook();
+  }
+
   /**
    * 대시보드 전체 지표 조회 - 4개 값을 DashBoardDTO에 조립하여 반환
    *
@@ -80,6 +93,8 @@ public class DashBoardService {
     dto.setMonthOrderCount(dashBoardMapper.selectMonthOrderCount());  // 이달 주문건수 세팅
     dto.setTodaySales(dashBoardMapper.selectTodaySales());            // 오늘 매출 세팅
     dto.setMonthSales(dashBoardMapper.selectMonthSales());            // 이달 매출 세팅
+    dto.setTopMemberList(dashBoardMapper.selectTopMember());
+    dto.setTopBookList(dashBoardMapper.selectTopBook());
     return dto;                                                               // 조립된 DTO 반환
   }
 
